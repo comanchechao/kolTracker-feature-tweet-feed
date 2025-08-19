@@ -144,8 +144,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     }
   };
 
-
-
   // Handle context menu option selection
   const handleContextMenuOption = (option: string) => {
     console.log(`Selected option: ${option} for text: "${selectedText}"`);
@@ -190,8 +188,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
   useEffect(() => {
     let selectionTimer: NodeJS.Timeout;
     let mouseUpTimer: NodeJS.Timeout;
-
-
 
     const showContextMenuForSelection = () => {
       const selection = window.getSelection();
@@ -331,7 +327,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ scale: 1.005 }}
     >
       <div className="    border bg-gradient-to-tl from-black/40 via-black/60 to-white/10 border-white/10 rounded-sm p-6 mb-4 transition-all duration-200 hover:bg-black/40 hover:border-white/20 relative overflow-hidden">
         {/* Subtle accent line */}
