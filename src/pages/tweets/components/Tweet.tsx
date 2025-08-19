@@ -53,7 +53,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     tokenName: "",
     tokenSymbol: "",
   });
-  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [imagesLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const tweetRef = useRef<HTMLDivElement>(null);
 
@@ -144,10 +144,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     }
   };
 
-  // Handle link clicks
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.stopPropagation();
-  };
+
 
   // Handle context menu option selection
   const handleContextMenuOption = (option: string) => {
@@ -194,9 +191,9 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     let selectionTimer: NodeJS.Timeout;
     let mouseUpTimer: NodeJS.Timeout;
 
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = () => {
       // Only hide context menu if clicking outside the context menu itself
-      const target = e.target as Element;
+      const target = event?.target as Element;
       if (target && !target.closest(".context-menu")) {
         setShowContextMenu(false);
       }
@@ -243,15 +240,15 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       selectionTimer = setTimeout(showContextMenuForSelection, 100);
     };
 
-    const handleGlobalMouseUp = (e: MouseEvent) => {
+    const handleGlobalMouseUp = () => {
       // Debounce mouse up events to improve performance
       clearTimeout(mouseUpTimer);
       mouseUpTimer = setTimeout(showContextMenuForSelection, 50);
     };
 
-    const handleGlobalMouseDown = (e: MouseEvent) => {
+    const handleGlobalMouseDown = () => {
       // Only hide context menu if clicking outside the context menu and outside the tweet
-      const target = e.target as Element;
+      const target = event?.target as Element;
       const tweetElement = tweetRef.current;
 
       if (

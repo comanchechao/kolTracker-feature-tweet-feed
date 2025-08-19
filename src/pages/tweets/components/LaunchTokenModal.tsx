@@ -22,7 +22,7 @@ const LaunchTokenModal: React.FC<LaunchTokenModalProps> = ({
   const [website, setWebsite] = useState("");
   const [twitterUrl, setTwitterUrl] = useState(initialTwitterUrl);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [splitRatio, setSplitRatio] = useState("0:100");
+  const [splitRatio] = useState("0:100");
   const [autoDump, setAutoDump] = useState(false);
   const [sliderValue, setSliderValue] = useState(3);
 
