@@ -6,7 +6,6 @@ import { Tweet as TweetMock } from "../../../services/twitterWebSocketService";
 import ImageModal from "../../../components/ImageModal";
 import LaunchTokenModal from "../../tweets/components/LaunchTokenModal";
 import { useIsMobile } from "../../../hooks/useIsMobile";
-import ImagePlaceholder from "../../../components/ImagePlaceholder";
 import OptimizedImage from "./OptimizedImage";
 interface TweetProps {
   tweet: TweetMock;
@@ -22,7 +21,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
   const [isLaunchTokenModalOpen, setIsLaunchTokenModalOpen] = useState(false);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const tweetRef = useRef<HTMLDivElement>(null);
   
@@ -100,11 +98,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
         return `${formattedTime} · ${days}d ago`;
       }
     }
-  };
-
-  // Handle link clicks
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.stopPropagation();
   };
 
   // Process tweet text to render links, mentions, and hashtags
@@ -239,7 +232,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                   alt="Tweet media"
                   className="w-full h-48 object-cover rounded-xl border border-light-bg border-opacity-30"
                   priority={true}
-                  onLoad={() => setImagesLoaded(true)}
                 />
               )}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
@@ -311,7 +303,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                             alt="Quoted tweet media"
                             className="w-full h-32 object-cover rounded-lg"
                             priority={true}
-                            onLoad={() => setImagesLoaded(true)}
                           />
                         )}
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">

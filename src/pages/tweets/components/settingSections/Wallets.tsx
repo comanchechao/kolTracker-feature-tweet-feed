@@ -2,10 +2,9 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 
 interface WalletsProps {
-  isMobile: boolean;
 }
 
-const Wallets: React.FC<WalletsProps> = ({ isMobile }) => {
+const Wallets: React.FC<WalletsProps> = () => {
   return (
     <div>
       {/* Wallets Settings */}

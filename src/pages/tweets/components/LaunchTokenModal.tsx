@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { createPortal } from 'react-dom';
 
@@ -14,7 +14,6 @@ const LaunchTokenModal: React.FC<LaunchTokenModalProps> = ({ isOpen, onClose, in
   const [website, setWebsite] = useState('');
   const [twitterUrl, setTwitterUrl] = useState(initialTwitterUrl);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [splitRatio, setSplitRatio] = useState('0:100');
   const [autoDump, setAutoDump] = useState(false);
   const [sliderValue, setSliderValue] = useState(3);
 
@@ -63,7 +62,6 @@ const LaunchTokenModal: React.FC<LaunchTokenModalProps> = ({ isOpen, onClose, in
       twitterUrl,
       selectedImage,
       selectedTokenType,
-      splitRatio,
       autoDump,
       sliderValue,
       selectedSolOption

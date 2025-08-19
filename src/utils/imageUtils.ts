@@ -45,9 +45,6 @@ export const getPlaceholderImageUrl = (originalUrl: string, width = 10): string 
  * @param src - The final image source
  */
 export const optimizeImageLoading = (imageElement: HTMLImageElement, src: string): void => {
-  // First set a low quality placeholder
-  const placeholderSrc = getPlaceholderImageUrl(src);
-  
   // Preload the full quality image
   preloadImage(src).then(() => {
     // Once preloaded, switch to the full quality image

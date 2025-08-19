@@ -2,10 +2,9 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 
 interface MyFeedProps {
-  isMobile: boolean;
 }
 
-const MyFeed: React.FC<MyFeedProps> = ({ isMobile }) => {
+const MyFeed: React.FC<MyFeedProps> = () => {
   return (
     <div>
       {/* Search input */}

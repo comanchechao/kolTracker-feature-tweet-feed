@@ -1,8 +1,7 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 interface AccountProps {
-    isMobile: boolean;
 }
-const Account: React.FC<AccountProps> = ({ isMobile }) => {
+const Account: React.FC<AccountProps> = () => {
     return (
         <div>
             {/* Account section */}

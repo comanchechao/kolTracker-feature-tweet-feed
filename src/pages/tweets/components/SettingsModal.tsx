@@ -168,15 +168,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                 </div>
                 {/* Only show content if section is expanded on mobile or always show on desktop */}
                 {(isMobile ? expandedSection === 'feed' : activeSection === 'feed') ? (
-                  <MyFeed isMobile={isMobile} />
+                  <MyFeed />
                 ) : (isMobile ? expandedSection === 'notifications' : activeSection === 'notifications') ? (
                   <Notifications isMobile={isMobile} />
                 ) : (isMobile ? expandedSection === 'wallets' : activeSection === 'wallets') ? (
-                  <Wallets isMobile={isMobile} />
+                  <Wallets />
                 ) : (isMobile ? expandedSection === 'filters' : activeSection === 'filters') ? (
                   <Filters isMobile={isMobile} />
                 ) : (isMobile ? expandedSection === 'account' : activeSection === 'account') ? (
-                  <Account isMobile={isMobile} />
+                  <Account />
                 ) : (isMobile ? expandedSection === 'automation' : activeSection === 'automation') ? (
                   <Automation isMobile={isMobile} />
                 ) : (isMobile ? expandedSection === 'transactions' : activeSection === 'transactions') ? (
@@ -281,11 +281,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
             {/* Only show content if section is expanded on mobile or always show on desktop */}
             {(isMobile ? expandedSection === 'feed' : activeSection === 'feed') ? (
-              <MyFeed isMobile={isMobile} />
+              <MyFeed />
             ) : (isMobile ? expandedSection === 'notifications' : activeSection === 'notifications') ? (
               <Notifications isMobile={isMobile} />
             ) : (isMobile ? expandedSection === 'wallets' : activeSection === 'wallets') ? (
-              <Wallets isMobile={isMobile} />
+              <Wallets />
             ) : (isMobile ? expandedSection === 'filters' : activeSection === 'filters') ? (
               <Filters isMobile={isMobile} />
             ) : (isMobile ? expandedSection === 'automation' : activeSection === 'automation') ? (
@@ -295,7 +295,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             ) : (isMobile ? expandedSection === 'application' : activeSection === 'application') ? (
               <Application isMobile={isMobile} />
             ) : (isMobile ? expandedSection === 'account' : activeSection === 'account') ? (
-              <Account isMobile={isMobile} />
+              <Account />
             ) : (
               <></>
             )}
