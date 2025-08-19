@@ -274,7 +274,7 @@ const TradesCard: React.FC<TradesCardProps> = React.memo(
               href={`https://solscan.io/account/${account.walletAddress}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-main-accent hover:text-main-highlight transition-all duration-300 inline-block mt-1 hover:scale-110"
+              className="text-main-accent hover:text-main-highlight transition-all duration-300 inline-block mt-1  "
             >
               <Icon
                 icon="material-symbols:open-in-new"

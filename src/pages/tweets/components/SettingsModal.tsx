@@ -1,14 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Icon } from '@iconify/react';
-import { useMediaQuery } from '../../../hooks/useMediaQuery';
-import MyFeed from './settingSections/MyFeed';
-import Notifications from './settingSections/Notifications';
-import Wallets from './settingSections/Wallets';
-import Filters from './settingSections/Filters';
-import Automation from './settingSections/Automation';
-import Transactions from './settingSections/Transactions';
-import Account from './settingSections/Account';
-import Application from './settingSections/Application';
+import React, { useRef, useEffect, useState } from "react";
+import { Icon } from "@iconify/react";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import MyFeed from "./settingSections/MyFeed";
+import Notifications from "./settingSections/Notifications";
+import Wallets from "./settingSections/Wallets";
+import Filters from "./settingSections/Filters";
+import Automation from "./settingSections/Automation";
+import Transactions from "./settingSections/Transactions";
+import Account from "./settingSections/Account";
+import Application from "./settingSections/Application";
 
 // Add animation for fade-in effect
 interface MenuSection {
@@ -26,20 +26,69 @@ interface SettingsModalProps {
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const [activeSection, setActiveSection] = useState<'feed' | 'notifications' | 'wallets' | 'filters' | 'automation' | 'transactions' | 'application' | 'account'>('feed');
-  const [expandedSection, setExpandedSection] = useState<string>('feed');  
+  const [activeSection, setActiveSection] = useState<
+    | "feed"
+    | "notifications"
+    | "wallets"
+    | "filters"
+    | "automation"
+    | "transactions"
+    | "application"
+    | "account"
+  >("feed");
+  const [expandedSection, setExpandedSection] = useState<string>("feed");
 
   const menuSections: MenuSection[] = [
-    { id: 'feed', title: 'My Feed', icon: 'material-symbols:rss-feed', enabled: true },
-    { id: 'notifications', title: 'Notifications', icon: 'material-symbols:notifications', enabled: true },
-    { id: 'wallets', title: 'Wallets', icon: 'material-symbols:wallet', enabled: true },
-    { id: 'filters', title: 'Filters', icon: 'material-symbols:filter-alt', enabled: true },
-    { id: 'automation', title: 'Automation', icon: 'material-symbols:auto-mode', enabled: true },
-    { id: 'transactions', title: 'Transactions', icon: 'material-symbols:receipt-long', enabled: true },
-    { id: 'application', title: 'Application', icon: 'material-symbols:apps', enabled: true },
-    { id: 'account', title: 'Account', icon: 'material-symbols:person', enabled: true },
+    {
+      id: "feed",
+      title: "My Feed",
+      icon: "material-symbols:rss-feed",
+      enabled: true,
+    },
+    {
+      id: "notifications",
+      title: "Notifications",
+      icon: "material-symbols:notifications",
+      enabled: true,
+    },
+    {
+      id: "wallets",
+      title: "Wallets",
+      icon: "material-symbols:wallet",
+      enabled: true,
+    },
+    {
+      id: "filters",
+      title: "Filters",
+      icon: "material-symbols:filter-alt",
+      enabled: true,
+    },
+    {
+      id: "automation",
+      title: "Automation",
+      icon: "material-symbols:auto-mode",
+      enabled: true,
+    },
+    {
+      id: "transactions",
+      title: "Transactions",
+      icon: "material-symbols:receipt-long",
+      enabled: true,
+    },
+    {
+      id: "application",
+      title: "Application",
+      icon: "material-symbols:apps",
+      enabled: true,
+    },
+    {
+      id: "account",
+      title: "Account",
+      icon: "material-symbols:person",
+      enabled: true,
+    },
   ];
 
   useEffect(() => {
@@ -47,39 +96,40 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       // Don't close settings modal if keyword modal is open
       //if (isKeywordModalOpen) return;
 
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, onClose/* , isKeywordModalOpen */]);
-
-
+  }, [isOpen, onClose /* , isKeywordModalOpen */]);
 
   const toggleSection = (sectionId: string) => {
     // Only toggle enabled sections
-    const section = menuSections.find(s => s.id === sectionId);
+    const section = menuSections.find((s) => s.id === sectionId);
     if (section && section.enabled) {
       // If we're closing the current section, fade out first
       if (expandedSection === sectionId) {
         // Add a slight delay before actually closing the section
         setTimeout(() => {
-          setExpandedSection('');
+          setExpandedSection("");
         }, 100);
       } else {
         // If opening a new section, update immediately
         setExpandedSection(sectionId);
 
         // Update active section for desktop view
-        if (sectionId === 'feed' || sectionId === 'account') {
-          setActiveSection(sectionId as 'feed' | 'account');
+        if (sectionId === "feed" || sectionId === "account") {
+          setActiveSection(sectionId as "feed" | "account");
         }
       }
     }
@@ -87,25 +137,25 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/70">
       <div
         ref={modalRef}
-        className="relative w-full max-w-4xl mx-auto bg-main-bg border border-white/[0.1] shadow-xl rounded-xl flex flex-col min-h-[600px] max-h-[90vh] overflow-hidden"
-        style={{
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          background: 'rgba(0, 8, 20, 0.95)',
-        }}
+        className="relative w-full max-w-4xl mx-auto bg-black/90 border border-white/10 shadow-lg rounded-sm flex flex-col min-h-[600px] max-h-[90vh] overflow-hidden"
       >
         {/* Header - Show on mobile and desktop */}
-        <div className="flex items-center justify-between p-2 border-b border-white/[0.1] sticky top-0 bg-main-bg z-10">
-          <div className="flex items-center space-x-2">
-            <Icon icon="material-symbols:settings" className="w-6 h-6 text-main-light-text" />
-            <h2 className="text-xl font-bold text-main-text">Settings</h2>
+        <div className="flex items-center justify-between p-4 border-b border-white/10 sticky top-0 bg-black/90 z-10">
+          <div className="flex items-center space-x-3">
+            <Icon
+              icon="material-symbols:settings"
+              className="w-6 h-6 text-main-accent"
+            />
+            <h2 className="text-xl font-bold text-main-text font-tiktok">
+              Settings
+            </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-white/[0.06] text-main-light-text hover:text-main-accent transition-colors duration-200"
+            className="p-2 rounded-sm hover:bg-white/10 text-main-light-text hover:text-main-accent transition-colors duration-200"
           >
             <Icon icon="mdi:close" className="w-6 h-6" />
           </button>
@@ -115,130 +165,211 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         {isMobile && (
           <>
             <div className="flex h-[calc(100vh-72px)]">
-              <div className="w-12 bg-black/30 border-r border-white/[0.1] flex flex-col items-center py-6 space-y-8">
+              <div className="w-12 bg-black/60 border-r border-white/10 flex flex-col items-center py-6 space-y-6">
                 {menuSections.map((section) => (
                   <div key={section.id} className="relative">
                     <button
-                      className={`p-2 rounded-lg transition-all duration-200 ${section.enabled ? (expandedSection === section.id ? 'bg-main-accent/20' : 'hover:bg-white/[0.06]') : 'opacity-50 cursor-not-allowed'}`}
+                      className={`p-2 rounded-sm transition-all duration-200 ${
+                        section.enabled
+                          ? expandedSection === section.id
+                            ? "bg-main-accent/20"
+                            : "hover:bg-white/10"
+                          : "opacity-50 cursor-not-allowed"
+                      }`}
                       onClick={() => toggleSection(section.id)}
                       disabled={!section.enabled}
                     >
                       <Icon
                         icon={section.icon}
-                        className={`w-5 h-5 ${section.enabled ? (expandedSection === section.id ? 'text-main-accent' : 'text-main-light-text') : 'text-main-light-text/50'}`}
+                        className={`w-5 h-5 ${
+                          section.enabled
+                            ? expandedSection === section.id
+                              ? "text-main-accent"
+                              : "text-main-light-text"
+                            : "text-main-light-text/50"
+                        }`}
                       />
                     </button>
                     {/* Active indicator */}
                     {expandedSection === section.id && section.enabled && (
-                      <div className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-main-accent rounded-r-full animate-pulse"></div>
+                      <div className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-main-accent rounded-r-sm"></div>
                     )}
                   </div>
                 ))}
               </div>
-              <div className='w-full'>
-
-
+              <div className="w-full">
                 {/* Main content area */}
                 <div className="flex-1 overflow-y-auto">
                   {expandedSection && (
-                    <div
-                      className="p-4"
-                    >
+                    <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-3">
                           <Icon
-                            icon={menuSections.find(s => s.id === expandedSection)?.icon || ''}
+                            icon={
+                              menuSections.find((s) => s.id === expandedSection)
+                                ?.icon || ""
+                            }
                             className="w-5 h-5 text-main-accent"
                           />
-                          <h3 className="text-lg font-bold text-main-text">
-                            {menuSections.find(s => s.id === expandedSection)?.title}
+                          <h3 className="text-lg font-bold text-main-text font-tiktok">
+                            {
+                              menuSections.find((s) => s.id === expandedSection)
+                                ?.title
+                            }
                           </h3>
                         </div>
                       </div>
 
-                      <p className="text-xs text-main-light-text mb-4">
-                        {expandedSection === 'feed'
-                          ? 'Manage your personal feed, sounds and notifications'
-                          : 'Manage your account settings and referrals'
-                        }
+                      <p className="text-xs text-main-light-text mb-4 font-tiktok">
+                        {expandedSection === "feed"
+                          ? "Manage your personal feed, sounds and notifications"
+                          : "Manage your account settings and referrals"}
                       </p>
-
                     </div>
                   )}
                 </div>
                 {/* Only show content if section is expanded on mobile or always show on desktop */}
-                {(isMobile ? expandedSection === 'feed' : activeSection === 'feed') ? (
+                {(
+                  isMobile
+                    ? expandedSection === "feed"
+                    : activeSection === "feed"
+                ) ? (
                   <MyFeed />
-                ) : (isMobile ? expandedSection === 'notifications' : activeSection === 'notifications') ? (
+                ) : (
+                    isMobile
+                      ? expandedSection === "notifications"
+                      : activeSection === "notifications"
+                  ) ? (
                   <Notifications isMobile={isMobile} />
-                ) : (isMobile ? expandedSection === 'wallets' : activeSection === 'wallets') ? (
+                ) : (
+                    isMobile
+                      ? expandedSection === "wallets"
+                      : activeSection === "wallets"
+                  ) ? (
                   <Wallets />
-                ) : (isMobile ? expandedSection === 'filters' : activeSection === 'filters') ? (
+                ) : (
+                    isMobile
+                      ? expandedSection === "filters"
+                      : activeSection === "filters"
+                  ) ? (
                   <Filters isMobile={isMobile} />
-                ) : (isMobile ? expandedSection === 'account' : activeSection === 'account') ? (
+                ) : (
+                    isMobile
+                      ? expandedSection === "account"
+                      : activeSection === "account"
+                  ) ? (
                   <Account />
-                ) : (isMobile ? expandedSection === 'automation' : activeSection === 'automation') ? (
+                ) : (
+                    isMobile
+                      ? expandedSection === "automation"
+                      : activeSection === "automation"
+                  ) ? (
                   <Automation isMobile={isMobile} />
-                ) : (isMobile ? expandedSection === 'transactions' : activeSection === 'transactions') ? (
+                ) : (
+                    isMobile
+                      ? expandedSection === "transactions"
+                      : activeSection === "transactions"
+                  ) ? (
                   <Transactions isMobile={isMobile} />
-                ) : (isMobile ? expandedSection === 'application' : activeSection === 'application') ? (
+                ) : (
+                    isMobile
+                      ? expandedSection === "application"
+                      : activeSection === "application"
+                  ) ? (
                   <Application isMobile={isMobile} />
-                ) : (<></>)}
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           </>
         )}
 
         {/* Desktop layout */}
-        <div className={`flex ${isMobile ? 'hidden' : ''}`} style={{ height: '100vh' }}>
+        <div
+          className={`flex ${isMobile ? "hidden" : ""}`}
+          style={{ height: "100vh" }}
+        >
           {!isMobile && (
-            <div className="w-1/5 border-r border-white/[0.1] p-4 h-full overflow-y-auto">
+            <div className="w-1/5 border-r border-white/10 p-4 h-full overflow-y-auto bg-black/60">
               <ul className="space-y-2">
                 <li
-                  className={`px-4 py-2 ${activeSection === 'feed' ? 'bg-white/[0.06] text-main-accent' : 'hover:bg-white/[0.03] text-main-light-text'} rounded-lg font-medium cursor-pointer transition-colors duration-200`}
-                  onClick={() => setActiveSection('feed')}
+                  className={`px-4 py-3 ${
+                    activeSection === "feed"
+                      ? "bg-main-accent/20 text-main-accent border border-main-accent/30"
+                      : "hover:bg-white/10 text-main-light-text"
+                  } rounded-sm font-medium cursor-pointer transition-all duration-200 font-tiktok`}
+                  onClick={() => setActiveSection("feed")}
                 >
                   My Feed
                 </li>
                 <li
-                  className={`px-4 py-2 ${activeSection === 'notifications' ? 'bg-white/[0.06] text-main-accent' : 'hover:bg-white/[0.03] text-main-light-text'} rounded-lg font-medium cursor-pointer transition-colors duration-200`}
-                  onClick={() => setActiveSection('notifications')}
+                  className={`px-4 py-3 ${
+                    activeSection === "notifications"
+                      ? "bg-main-accent/20 text-main-accent border border-main-accent/30"
+                      : "hover:bg-white/10 text-main-light-text"
+                  } rounded-sm font-medium cursor-pointer transition-all duration-200 font-tiktok`}
+                  onClick={() => setActiveSection("notifications")}
                 >
                   Notifications
                 </li>
                 <li
-                  className={`px-4 py-2 ${activeSection === 'wallets' ? 'bg-white/[0.06] text-main-accent' : 'hover:bg-white/[0.03] text-main-light-text'} rounded-lg font-medium cursor-pointer transition-colors duration-200`}
-                  onClick={() => setActiveSection('wallets')}
+                  className={`px-4 py-3 ${
+                    activeSection === "wallets"
+                      ? "bg-main-accent/20 text-main-accent border border-main-accent/30"
+                      : "hover:bg-white/10 text-main-light-text"
+                  } rounded-sm font-medium cursor-pointer transition-all duration-200 font-tiktok`}
+                  onClick={() => setActiveSection("wallets")}
                 >
                   Wallets
                 </li>
                 <li
-                  className={`px-4 py-2 ${activeSection === 'filters' ? 'bg-white/[0.06] text-main-accent' : 'hover:bg-white/[0.03] text-main-light-text'} rounded-lg font-medium cursor-pointer transition-colors duration-200`}
-                  onClick={() => setActiveSection('filters')}
+                  className={`px-4 py-3 ${
+                    activeSection === "filters"
+                      ? "bg-main-accent/20 text-main-accent border border-main-accent/30"
+                      : "hover:bg-white/10 text-main-light-text"
+                  } rounded-sm font-medium cursor-pointer transition-all duration-200 font-tiktok`}
+                  onClick={() => setActiveSection("filters")}
                 >
                   Filters
                 </li>
                 <li
-                  className={`px-4 py-2 ${activeSection === 'automation' ? 'bg-white/[0.06] text-main-accent' : 'hover:bg-white/[0.03] text-main-light-text'} rounded-lg font-medium cursor-pointer transition-colors duration-200`}
-                  onClick={() => setActiveSection('automation')}
+                  className={`px-4 py-3 ${
+                    activeSection === "automation"
+                      ? "bg-main-accent/20 text-main-accent border border-main-accent/30"
+                      : "hover:bg-white/10 text-main-light-text"
+                  } rounded-sm font-medium cursor-pointer transition-all duration-200 font-tiktok`}
+                  onClick={() => setActiveSection("automation")}
                 >
                   Automation
                 </li>
                 <li
-                  className={`px-4 py-2 ${activeSection === 'transactions' ? 'bg-white/[0.06] text-main-accent' : 'hover:bg-white/[0.03] text-main-light-text'} rounded-lg font-medium cursor-pointer transition-colors duration-200`}
-                  onClick={() => setActiveSection('transactions')}
+                  className={`px-4 py-3 ${
+                    activeSection === "transactions"
+                      ? "bg-main-accent/20 text-main-accent border border-main-accent/30"
+                      : "hover:bg-white/10 text-main-light-text"
+                  } rounded-sm font-medium cursor-pointer transition-all duration-200 font-tiktok`}
+                  onClick={() => setActiveSection("transactions")}
                 >
                   Transactions
                 </li>
                 <li
-                  className={`px-4 py-2 ${activeSection === 'application' ? 'bg-white/[0.06] text-main-accent' : 'hover:bg-white/[0.03] text-main-light-text'} rounded-lg font-medium cursor-pointer transition-colors duration-200`}
-                  onClick={() => setActiveSection('application')}
+                  className={`px-4 py-3 ${
+                    activeSection === "application"
+                      ? "bg-main-accent/20 text-main-accent border border-main-accent/30"
+                      : "hover:bg-white/10 text-main-light-text"
+                  } rounded-sm font-medium cursor-pointer transition-all duration-200 font-tiktok`}
+                  onClick={() => setActiveSection("application")}
                 >
                   Application
                 </li>
                 <li
-                  className={`px-4 py-2 ${activeSection === 'account' ? 'bg-white/[0.06] text-main-accent' : 'hover:bg-white/[0.03] text-main-light-text'} rounded-lg font-medium cursor-pointer transition-colors duration-200`}
-                  onClick={() => setActiveSection('account')}
+                  className={`px-4 py-3 ${
+                    activeSection === "account"
+                      ? "bg-main-accent/20 text-main-accent border border-main-accent/30"
+                      : "hover:bg-white/10 text-main-light-text"
+                  } rounded-sm font-medium cursor-pointer transition-all duration-200 font-tiktok`}
+                  onClick={() => setActiveSection("account")}
                 >
                   Account
                 </li>
@@ -249,52 +380,92 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           {/* Main content */}
           <div
             ref={contentRef}
-            className={`${isMobile ? 'hidden' : 'w-4/5'} p-4 ${isMobile ? 'pb-16' : ''} transition-all duration-300 h-full overflow-y-auto`}
+            className={`${isMobile ? "hidden" : "w-4/5"} p-6 ${
+              isMobile ? "pb-16" : ""
+            } transition-all duration-200 h-full overflow-y-auto bg-black/40`}
           >
             {!isMobile && (
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold text-main-text">
-                  {activeSection === 'feed' && 'My Feed'}
-                  {activeSection === 'notifications' && 'Notifications'}
-                  {activeSection === 'wallets' && 'Wallets'}
-                  {activeSection === 'filters' && 'Filters'}
-                  {activeSection === 'automation' && 'Automation'}
-                  {activeSection === 'transactions' && 'Transactions'}
-                  {activeSection === 'application' && 'Application'}
-                  {activeSection === 'account' && 'Account'}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-main-text font-tiktok">
+                  {activeSection === "feed" && "My Feed"}
+                  {activeSection === "notifications" && "Notifications"}
+                  {activeSection === "wallets" && "Wallets"}
+                  {activeSection === "filters" && "Filters"}
+                  {activeSection === "automation" && "Automation"}
+                  {activeSection === "transactions" && "Transactions"}
+                  {activeSection === "application" && "Application"}
+                  {activeSection === "account" && "Account"}
                 </h2>
               </div>
             )}
 
             {!isMobile && (
-              <p className="text-sm text-main-light-text mb-4">
-                {activeSection === 'feed' && 'Manage your personal feed, sounds and notifications'}
-                {activeSection === 'notifications' && 'Configure notification sounds and volume settings'}
-                {activeSection === 'wallets' && 'Manage your wallets and transaction settings'}
-                {activeSection === 'filters' && 'Set up keyword filters and highlighting'}
-                {activeSection === 'automation' && 'Configure automation and trading settings'}
-                {activeSection === 'transactions' && 'Configure transaction methods and fees'}
-                {activeSection === 'application' && 'Configure general application settings'}
-                {activeSection === 'account' && 'Manage your account settings and referrals'}
+              <p className="text-sm text-main-light-text mb-6 font-tiktok">
+                {activeSection === "feed" &&
+                  "Manage your personal feed, sounds and notifications"}
+                {activeSection === "notifications" &&
+                  "Configure notification sounds and volume settings"}
+                {activeSection === "wallets" &&
+                  "Manage your wallets and transaction settings"}
+                {activeSection === "filters" &&
+                  "Set up keyword filters and highlighting"}
+                {activeSection === "automation" &&
+                  "Configure automation and trading settings"}
+                {activeSection === "transactions" &&
+                  "Configure transaction methods and fees"}
+                {activeSection === "application" &&
+                  "Configure general application settings"}
+                {activeSection === "account" &&
+                  "Manage your account settings and referrals"}
               </p>
             )}
 
             {/* Only show content if section is expanded on mobile or always show on desktop */}
-            {(isMobile ? expandedSection === 'feed' : activeSection === 'feed') ? (
+            {(
+              isMobile ? expandedSection === "feed" : activeSection === "feed"
+            ) ? (
               <MyFeed />
-            ) : (isMobile ? expandedSection === 'notifications' : activeSection === 'notifications') ? (
+            ) : (
+                isMobile
+                  ? expandedSection === "notifications"
+                  : activeSection === "notifications"
+              ) ? (
               <Notifications isMobile={isMobile} />
-            ) : (isMobile ? expandedSection === 'wallets' : activeSection === 'wallets') ? (
+            ) : (
+                isMobile
+                  ? expandedSection === "wallets"
+                  : activeSection === "wallets"
+              ) ? (
               <Wallets />
-            ) : (isMobile ? expandedSection === 'filters' : activeSection === 'filters') ? (
+            ) : (
+                isMobile
+                  ? expandedSection === "filters"
+                  : activeSection === "filters"
+              ) ? (
               <Filters isMobile={isMobile} />
-            ) : (isMobile ? expandedSection === 'automation' : activeSection === 'automation') ? (
+            ) : (
+                isMobile
+                  ? expandedSection === "automation"
+                  : activeSection === "automation"
+              ) ? (
               <Automation isMobile={isMobile} />
-            ) : (isMobile ? expandedSection === 'transactions' : activeSection === 'transactions') ? (
+            ) : (
+                isMobile
+                  ? expandedSection === "transactions"
+                  : activeSection === "transactions"
+              ) ? (
               <Transactions isMobile={isMobile} />
-            ) : (isMobile ? expandedSection === 'application' : activeSection === 'application') ? (
+            ) : (
+                isMobile
+                  ? expandedSection === "application"
+                  : activeSection === "application"
+              ) ? (
               <Application isMobile={isMobile} />
-            ) : (isMobile ? expandedSection === 'account' : activeSection === 'account') ? (
+            ) : (
+                isMobile
+                  ? expandedSection === "account"
+                  : activeSection === "account"
+              ) ? (
               <Account />
             ) : (
               <></>
@@ -303,7 +474,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default SettingsModal;

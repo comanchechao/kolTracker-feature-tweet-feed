@@ -190,7 +190,7 @@ const Footer: React.FC = React.memo(() => {
                   placeholder="Enter your email"
                   className="flex-1 md:w-64 px-4 py-2.5 bg-main-bg bg-opacity-50   border border-light-bg border-opacity-50 rounded-l-lg text-main-text placeholder-main-light-text font-tiktok text-sm focus:outline-none focus:ring-2 focus:ring-main-accent focus:border-main-accent transition-all duration-300"
                 />
-                <button className="px-6 py-2.5 bg-main-accent hover:bg-main-highlight text-main-bg font-tiktok   text-sm rounded-r-lg transition-all duration-300 transform hover:scale-105">
+                <button className="px-6 py-2.5 bg-main-accent hover:bg-main-highlight text-main-bg font-tiktok   text-sm rounded-r-lg transition-all duration-300 transform  ">
                   Subscribe
                 </button>
               </div>

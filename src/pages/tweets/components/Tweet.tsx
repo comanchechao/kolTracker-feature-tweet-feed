@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Icon } from "@iconify/react"; 
+import { Icon } from "@iconify/react";
 import "../../../css/twitter.css";
-import { motion } from "framer-motion"; 
+import { motion } from "framer-motion";
 import { Tweet as TweetMock } from "../../../services/twitterWebSocketService";
 import ImageModal from "../../../components/ImageModal";
 import LaunchTokenModal from "../../tweets/components/LaunchTokenModal";
@@ -21,9 +21,10 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
   const [isLaunchTokenModalOpen, setIsLaunchTokenModalOpen] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const tweetRef = useRef<HTMLDivElement>(null);
-  
+
   // Use Intersection Observer to detect when tweet is visible
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -35,22 +36,22 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       },
       { threshold: 0.1 } // Start loading when 10% of the tweet is visible
     );
-    
+
     if (tweetRef.current) {
       observer.observe(tweetRef.current);
     }
-    
+
     return () => observer.disconnect();
   }, []);
-  
+
   // Set images as loaded when tweet becomes visible
   useEffect(() => {
     if (!isVisible) return;
-    
+
     // OptimizedImage component will handle the actual image loading
     // and call setImagesLoaded via onLoad prop
   }, [isVisible]);
-  
+
   // Check if viewing on mobile
   const isMobile = useIsMobile();
 
@@ -62,12 +63,12 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     // Format the hour
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    const formattedTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-    
+    const formattedTime = `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
+
     // Calculate time ago
     if (isMobile) {
       // Mobile view - show only time ago without formatted time and dot
@@ -98,6 +99,11 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
         return `${formattedTime} · ${days}d ago`;
       }
     }
+  };
+
+  // Handle link clicks
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
   };
 
   // Process tweet text to render links, mentions, and hashtags
@@ -158,36 +164,38 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ scale: 1.01 }}
     >
-      <div className="tweet-panel bg-gradient-to-br from-main-bg to-main-bg-dark rounded-xl border border-white/[0.05] p-4 mb-4 hover:shadow-lg transition-all duration-200 relative">
-        <div className="flex-1 items-start">
+      <div className="    border bg-gradient-to-tl from-black/40 via-black/60 to-white/10 border-white/10 rounded-sm p-6 mb-4 transition-all duration-200 hover:bg-black/40 hover:border-white/20 relative overflow-hidden">
+        {/* Subtle accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-main-accent/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200"></div>
+
+        <div className="relative z-10 flex-1 items-start">
           {/* User Avatar */}
           <div className="flex flex-row">
-            <img
-              src={tweet.user.profile_image_url_https}
-              alt={`${tweet.user.name}'s avatar`}
-              className="tweet-avatar rounded-full border-2 border-main-accent border-opacity-20 shadow-glow"
-            />
+            <div className="relative">
+              <img
+                src={tweet.user.profile_image_url_https}
+                alt={`${tweet.user.name}'s avatar`}
+                className="tweet-avatar rounded-sm border border-white/20 shadow-lg"
+              />
+            </div>
 
-            <div className="flex items-center mb-1 ml-2 w-full justify-between">
+            <div className="flex items-center mb-3 ml-4 w-full justify-between">
               <div className="flex flex-col">
-
-
-                <div className="flex flex-row flexfont-tiktok font-bold text-main-text neon-text">
-                  <span>{tweet.user.name}</span><span>{tweet.user.verified && (
-                    <div className="ml-1 mt-1">
+                <div className="flex flex-row items-center font-tiktok font-bold text-main-text">
+                  <span className="text-lg">{tweet.user.name}</span>
+                  {tweet.user.verified && (
+                    <div className="ml-2 mt-1">
                       <Icon
                         icon="mdi:check-decagram"
-                        className="w-4 h-4 text-main-accent"
+                        className="w-5 h-5 text-main-accent"
                       />
                     </div>
-                  )}</span>
+                  )}
                 </div>
-                <div className="text-main-light-text font-tiktok dim-glow">
+                <div className="text-main-light-text font-tiktok text-sm">
                   @{tweet.user.screen_name}
                 </div>
-
               </div>
               <div className="">
                 <button
@@ -196,9 +204,12 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                     e.stopPropagation();
                     setIsLaunchTokenModalOpen(true);
                   }}
-                  className="flex items-center gap-1 md:px-3 md:py-1 px-2 py-2 text-xs font-medium text-white transition-all duration-200 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full hover:from-gray-700 hover:to-gray-800 hover:shadow-lg hover:scale-105 opacity-90 hover:opacity-100 shadow-md border border-gray-700"
+                  className="flex items-center gap-2 md:px-4 md:py-2 px-3 py-2 text-sm font-medium text-white transition-all duration-200 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-white/30 rounded-sm"
                 >
-                  <Icon icon="mingcute:rocket-line" className="md:w-3 md:h-3 w-4 h-4" />
+                  <Icon
+                    icon="mingcute:rocket-line"
+                    className="md:w-4 md:h-4 w-5 h-5"
+                  />
                   <span className="md:inline hidden">Launch Token</span>
                 </button>
               </div>
@@ -206,21 +217,19 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
           </div>
 
           {/* Tweet Text */}
-          <div className="text-main-text mb-3 tweet-text font-tiktok crypto-text">
+          <div className="text-main-text mb-4 tweet-text font-tiktok text-sm leading-relaxed">
             {renderTweetText(tweetText)}
           </div>
 
           {/* Tweet Media (if any) */}
           {tweet.entities.media && tweet.entities.media.length > 0 && (
             <div
-              className="mt-2 mb-3 rounded-xl overflow-hidden tweet-media relative group cursor-pointer"
+              className="mt-3 mb-4 rounded-sm overflow-hidden tweet-media relative group cursor-pointer border border-white/10"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 if (tweet.entities.media) {
-                  setCurrentImageUrl(
-                    tweet.entities.media[0].media_url_https
-                  );
+                  setCurrentImageUrl(tweet.entities.media[0].media_url_https);
                   setIsImageModalOpen(true);
                 }
               }}
@@ -230,15 +239,16 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                 <OptimizedImage
                   src={tweet.entities.media[0].media_url_https}
                   alt="Tweet media"
-                  className="w-full h-48 object-cover rounded-xl border border-light-bg border-opacity-30"
+                  className="w-full h-56 object-cover rounded-sm border border-white/10 transition-transform duration-200  "
                   priority={true}
+                  onLoad={() => setImagesLoaded(true)}
                 />
               )}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Icon
                     icon="mdi:fullscreen"
-                    className="w-8 h-8 text-white drop-shadow-lg"
+                    className="w-10 h-10 text-white drop-shadow-lg"
                   />
                 </div>
               </div>
@@ -247,28 +257,28 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
 
           {/* Quoted Tweet (if any) */}
           {tweet.is_quote_status && tweet.quoted_status && (
-            <div className="mt-2 mb-3 border border-light-bg border-opacity-50 rounded-xl p-3 hover:bg-light-bg hover:bg-opacity-10 transition-all duration-200">
+            <div className="mt-3 mb-4 border border-white/10 rounded-sm p-4 hover:bg-white/5 transition-all duration-200 bg-black/20">
               <div className="flex items-start">
-                <div className="flex-shrink-0 mr-2">
+                <div className="flex-shrink-0 mr-3">
                   <img
                     src={tweet.quoted_status.user.profile_image_url_https}
                     alt={`${tweet.quoted_status.user.name}'s avatar`}
-                    className="w-8 h-8 rounded-full border border-light-bg border-opacity-30"
+                    className="w-10 h-10 rounded-sm border border-white/20"
                   />
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center mb-1">
+                  <div className="flex items-center mb-2">
                     <div className="font-tiktok font-bold text-main-text text-sm">
                       {tweet.quoted_status.user.name}
                     </div>
-                    <div className="ml-1 text-main-light-text text-xs font-tiktok hidden md:inline ">
+                    <div className="ml-2 text-main-light-text text-xs font-tiktok hidden md:inline">
                       @{tweet.quoted_status.user.screen_name}
                     </div>
                     {tweet.quoted_status.user.verified && (
-                      <div className="ml-1 verified-badge bg-main-accent bg-opacity-10">
+                      <div className="ml-2 verified-badge bg-main-accent/20">
                         <Icon
                           icon="mdi:check-decagram"
-                          className="w-3 h-3 text-main-accent"
+                          className="w-4 h-4 text-main-accent"
                         />
                       </div>
                     )}
@@ -283,7 +293,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                   {tweet.quoted_status.entities.media &&
                     tweet.quoted_status.entities.media.length > 0 && (
                       <div
-                        className="mt-2 rounded-lg overflow-hidden tweet-media relative group cursor-pointer"
+                        className="mt-3 rounded-sm overflow-hidden tweet-media relative group cursor-pointer border border-white/10"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -299,17 +309,21 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                         {/* Only load image when tweet is visible */}
                         {isVisible && (
                           <OptimizedImage
-                            src={tweet.quoted_status.entities.media[0].media_url_https}
+                            src={
+                              tweet.quoted_status.entities.media[0]
+                                .media_url_https
+                            }
                             alt="Quoted tweet media"
-                            className="w-full h-32 object-cover rounded-lg"
+                            className="w-full h-36 object-cover rounded-sm transition-transform duration-200  "
                             priority={true}
+                            onLoad={() => setImagesLoaded(true)}
                           />
                         )}
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
                           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                             <Icon
                               icon="mdi:fullscreen"
-                              className="w-6 h-6 text-white drop-shadow-lg"
+                              className="w-8 h-8 text-white drop-shadow-lg"
                             />
                           </div>
                         </div>
@@ -322,23 +336,21 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
 
           {/* Replied To Tweet (if any) */}
           {tweet.in_reply_to_status_id && tweet.replied_to_tweet && (
-            <div className="mb-3 pt-2 border-t border-light-bg border-opacity-20">
-              <div className="text-main-light-text text-xs mb-2 font-tiktok">
-                <Icon
-                  icon="mdi:reply"
-                  className="w-3 h-3 inline-block mr-1"
-                />
-                Replying to <span className="text-main-accent">@{tweet.in_reply_to_screen_name}</span>
+            <div className="mb-4 pt-3 border-t border-white/10">
+              <div className="text-main-light-text text-xs mb-3 font-tiktok">
+                <Icon icon="mdi:reply" className="w-4 h-4 inline-block mr-2" />
+                Replying to{" "}
+                <span className="text-main-accent">
+                  @{tweet.in_reply_to_screen_name}
+                </span>
               </div>
-              <div className="border-l-2 border-main-accent pl-3 py-1 reply-line">
+              <div className="border-l-2 border-main-accent/50 pl-4 py-2 reply-line">
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 mr-2">
+                  <div className="flex-shrink-0 mr-3">
                     <img
-                      src={
-                        tweet.replied_to_tweet.user.profile_image_url_https
-                      }
+                      src={tweet.replied_to_tweet.user.profile_image_url_https}
                       alt={`${tweet.replied_to_tweet.user.name}'s avatar`}
-                      className="w-6 h-6 rounded-full border border-light-bg border-opacity-30"
+                      className="w-8 h-8 rounded-sm border border-white/20"
                     />
                   </div>
                   <div className="flex-1">
@@ -346,7 +358,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                       <div className="font-tiktok font-bold text-main-text text-xs">
                         {tweet.replied_to_tweet.user.name}
                       </div>
-                      <div className="ml-1 text-main-light-text text-xs font-tiktok">
+                      <div className="ml-2 text-main-light-text text-xs font-tiktok">
                         @{tweet.replied_to_tweet.user.screen_name}
                       </div>
                     </div>
@@ -363,39 +375,43 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
             </div>
           )}
 
-          {/* Launch Token Button - Positioned in the top-right corner of the tweet */}
-
-
           {/* Tweet Stats (Read Only) with Date/Time */}
-          <div className="flex text-main-light-text text-sm space-x-4 pt-2 border-t border-light-bg border-opacity-20">
-            
-
-            <div className="flex items-center hover:text-main-accent transition-colors duration-200">
-              <Icon icon="mdi:comment-outline" className="w-4 h-4 mr-1" />
+          <div className="flex text-main-light-text text-sm space-x-6 pt-4 border-t border-white/10">
+            <div className="flex items-center hover:text-main-accent transition-colors duration-200 group">
+              <Icon
+                icon="mdi:comment-outline"
+                className="w-5 h-5 mr-2    transition-transform duration-200"
+              />
               <span>{Math.floor(Math.random() * 100)}</span>
             </div>
 
-            <div className="flex items-center hover:text-main-accent transition-colors duration-200">
-              <Icon icon="mdi:repeat" className="w-4 h-4 mr-1" />
+            <div className="flex items-center hover:text-main-accent transition-colors duration-200 group">
+              <Icon
+                icon="mdi:repeat"
+                className="w-5 h-5 mr-2    transition-transform duration-200"
+              />
               <span>{tweet.retweet_count}</span>
             </div>
 
-            <div className="flex items-center hover:text-main-accent transition-colors duration-200">
-              <Icon icon="mdi:heart-outline" className="w-4 h-4 mr-1" />
+            <div className="flex items-center hover:text-main-accent transition-colors duration-200 group">
+              <Icon
+                icon="mdi:heart-outline"
+                className="w-5 h-5 mr-2    transition-transform duration-200"
+              />
               <span>{tweet.favorite_count}</span>
             </div>
 
             <div className="flex items-center ml-auto text-main-accent">
-              <div className="text-main-light-text text-sm font-tiktok dim-glow mr-2">
-              {formatTimeAgo(tweet.created_at)}
-            </div>
+              <div className="text-main-light-text text-sm font-tiktok mr-3">
+                {formatTimeAgo(tweet.created_at)}
+              </div>
               <a
                 href={tweetUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block no-underline"
+                className="block no-underline   transition-transform duration-200"
               >
-                <Icon icon="mdi:open-in-new" className="w-4 h-4" />
+                <Icon icon="mdi:open-in-new" className="w-5 h-5" />
               </a>
             </div>
           </div>

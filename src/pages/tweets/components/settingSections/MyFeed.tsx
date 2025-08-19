@@ -1,8 +1,7 @@
-import React from 'react';
-import { Icon } from '@iconify/react';
+import React from "react";
+import { Icon } from "@iconify/react";
 
-interface MyFeedProps {
-}
+interface MyFeedProps {}
 
 const MyFeed: React.FC<MyFeedProps> = () => {
   return (
@@ -10,7 +9,10 @@ const MyFeed: React.FC<MyFeedProps> = () => {
       {/* Search input */}
       <div className="relative mb-4">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Icon icon="material-symbols:search" className="w-4 h-4 text-main-light-text" />
+          <Icon
+            icon="material-symbols:search"
+            className="w-4 h-4 text-main-light-text"
+          />
         </div>
         <input
           type="text"
@@ -24,54 +26,63 @@ const MyFeed: React.FC<MyFeedProps> = () => {
         {[
           {
             id: 6253282,
-            screen_name: 'WilliamShatner',
-            name: 'William Shatner',
-            profile_image_url_https: 'https://pbs.twimg.com/profile_images/1478179341582299138/2paPd3Uk_400x400.jpg',
-            followers: '6.1M',
-            verified: true
+            screen_name: "WilliamShatner",
+            name: "William Shatner",
+            profile_image_url_https:
+              "https://pbs.twimg.com/profile_images/1478179341582299138/2paPd3Uk_400x400.jpg",
+            followers: "6.1M",
+            verified: true,
           },
           {
             id: 783214,
-            screen_name: 'Lowkeytycoon1',
-            name: 'JEFFREY',
-            profile_image_url_https: 'https://pbs.twimg.com/profile_images/1955358549766193152/slHPNSMj_400x400.jpg',
-            followers: '67.5M',
-            verified: true
+            screen_name: "Lowkeytycoon1",
+            name: "JEFFREY",
+            profile_image_url_https:
+              "https://pbs.twimg.com/profile_images/1955358549766193152/slHPNSMj_400x400.jpg",
+            followers: "67.5M",
+            verified: true,
           },
           {
             id: 11348282,
-            screen_name: 'deepfates',
-            name: 'superfates',
-            profile_image_url_https: 'https://pbs.twimg.com/profile_images/1946272447189106689/XbIjiaT-_400x400.png',
-            followers: '181.4M',
-            verified: true
+            screen_name: "deepfates",
+            name: "superfates",
+            profile_image_url_https:
+              "https://pbs.twimg.com/profile_images/1946272447189106689/XbIjiaT-_400x400.png",
+            followers: "181.4M",
+            verified: true,
           },
           {
             id: 44196397,
-            screen_name: '_littlepop',
-            name: 'Little Pop',
-            profile_image_url_https: 'https://pbs.twimg.com/profile_images/1478179341582299138/2paPd3Uk_400x400.jpg',
-            followers: '2.3M',
-            verified: false
+            screen_name: "_littlepop",
+            name: "Little Pop",
+            profile_image_url_https:
+              "https://pbs.twimg.com/profile_images/1478179341582299138/2paPd3Uk_400x400.jpg",
+            followers: "2.3M",
+            verified: false,
           },
           {
             id: 937482,
-            screen_name: 'b__s',
-            name: 'B.S.',
-            profile_image_url_https: 'https://pbs.twimg.com/profile_images/1955358549766193152/slHPNSMj_400x400.jpg',
-            followers: '542K',
-            verified: true
+            screen_name: "b__s",
+            name: "B.S.",
+            profile_image_url_https:
+              "https://pbs.twimg.com/profile_images/1955358549766193152/slHPNSMj_400x400.jpg",
+            followers: "542K",
+            verified: true,
           },
           {
             id: 8372651,
-            screen_name: 'bolivian',
-            name: 'Bolivian',
-            profile_image_url_https: 'https://pbs.twimg.com/profile_images/1946272447189106689/XbIjiaT-_400x400.png',
-            followers: '1.2M',
-            verified: false
-          }
+            screen_name: "bolivian",
+            name: "Bolivian",
+            profile_image_url_https:
+              "https://pbs.twimg.com/profile_images/1946272447189106689/XbIjiaT-_400x400.png",
+            followers: "1.2M",
+            verified: false,
+          },
         ].map((user) => (
-          <div key={user.id} className="flex items-center justify-between p-2 sm:p-3 hover:bg-white/[0.03] rounded-lg transition-colors duration-200 border border-white/[0.05]">
+          <div
+            key={user.id}
+            className="flex items-center justify-between p-2 sm:p-3 hover:bg-white/[0.03] rounded-lg transition-colors duration-200 border border-white/[0.05]"
+          >
             <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
               <img
                 src={user.profile_image_url_https}
@@ -80,20 +91,33 @@ const MyFeed: React.FC<MyFeedProps> = () => {
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1">
-                  <p className="text-xs sm:text-sm font-medium text-main-text truncate">{user.screen_name}</p>
+                  <p className="text-xs sm:text-sm font-medium text-main-text truncate">
+                    {user.screen_name}
+                  </p>
                   {user.verified && (
-                    <Icon icon="material-symbols:verified" className="w-3 h-3 sm:w-4 sm:h-4 text-main-accent flex-shrink-0" />
+                    <Icon
+                      icon="material-symbols:verified"
+                      className="w-3 h-3 sm:w-4 sm:h-4 text-main-accent flex-shrink-0"
+                    />
                   )}
                 </div>
-                <p className="text-[10px] sm:text-xs text-main-light-text truncate">{user.followers} followers</p>
+                <p className="text-[10px] sm:text-xs text-main-light-text truncate">
+                  {user.followers} followers
+                </p>
               </div>
             </div>
             <div className="flex space-x-1 sm:space-x-2 flex-shrink-0">
               <button className="p-1 sm:p-1.5 rounded-full hover:bg-white/[0.06] text-main-light-text hover:text-main-accent transition-colors duration-200">
-                <Icon icon="material-symbols:notifications" className="w-3 h-3 sm:w-4 sm:h-4" />
+                <Icon
+                  icon="material-symbols:notifications"
+                  className="w-3 h-3 sm:w-4 sm:h-4"
+                />
               </button>
               <button className="p-1 sm:p-1.5 rounded-full hover:bg-white/[0.06] text-main-light-text hover:text-red-400 transition-colors duration-200">
-                <Icon icon="material-symbols:delete-outline" className="w-3 h-3 sm:w-4 sm:h-4" />
+                <Icon
+                  icon="material-symbols:delete-outline"
+                  className="w-3 h-3 sm:w-4 sm:h-4"
+                />
               </button>
             </div>
           </div>
@@ -105,7 +129,9 @@ const MyFeed: React.FC<MyFeedProps> = () => {
         <button className="p-1 rounded-full bg-white/[0.03] hover:bg-white/[0.06] text-main-light-text transition-colors duration-200">
           <Icon icon="material-symbols:chevron-left" className="w-5 h-5" />
         </button>
-        <span className="px-3 py-1 rounded-md bg-white/[0.06] text-main-accent text-sm">1</span>
+        <span className="px-3 py-1 rounded-md bg-white/[0.06] text-main-accent text-sm">
+          1
+        </span>
         <button className="p-1 rounded-full bg-white/[0.03] hover:bg-white/[0.06] text-main-light-text transition-colors duration-200">
           <Icon icon="material-symbols:chevron-right" className="w-5 h-5" />
         </button>

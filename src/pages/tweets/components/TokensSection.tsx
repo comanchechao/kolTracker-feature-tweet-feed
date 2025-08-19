@@ -1,10 +1,10 @@
-import React from 'react';
-import EmptyTokensState from '../../tokens/components/EmptyTokensState';
+import React from "react";
+import EmptyTokensState from "../../tokens/components/EmptyTokensState";
 
 const TokensSection: React.FC = () => {
   return (
-    <div className="tokens-section bg-gradient-to-br from-main-bg via-main-bg to-main-bg-dark rounded-xl border border-white/[0.1] p-4">
-      <EmptyTokensState  />
+    <div className="  bg-black/30 border border-white/10 rounded-sm p-6 shadow-lg backdrop-blur-0">
+      <EmptyTokensState />
     </div>
   );
 };

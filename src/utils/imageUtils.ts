@@ -22,19 +22,25 @@ export const preloadImage = (src: string): Promise<HTMLImageElement> => {
  * @param width - The width of the placeholder
  * @returns The placeholder image URL
  */
-export const getPlaceholderImageUrl = (originalUrl: string, width = 10): string => {
+export const getPlaceholderImageUrl = (
+  originalUrl: string,
+  width = 10
+): string => {
   // For URLs that support resizing parameters (like picsum.photos)
-  if (originalUrl.includes('picsum.photos')) {
+  if (originalUrl.includes("picsum.photos")) {
     // Extract the dimensions from the URL
     const match = originalUrl.match(/\/(\d+)\/(\d+)/);
     if (match) {
       const [, origWidth, origHeight] = match;
       const ratio = parseInt(origHeight) / parseInt(origWidth);
       const height = Math.round(width * ratio);
-      return originalUrl.replace(`/${origWidth}/${origHeight}`, `/${width}/${height}`);
+      return originalUrl.replace(
+        `/${origWidth}/${origHeight}`,
+        `/${width}/${height}`
+      );
     }
   }
-  
+
   // For other URLs, we can't generate a placeholder, so return the original
   return originalUrl;
 };
@@ -44,14 +50,19 @@ export const getPlaceholderImageUrl = (originalUrl: string, width = 10): string 
  * @param imageElement - The image element to optimize
  * @param src - The final image source
  */
-export const optimizeImageLoading = (imageElement: HTMLImageElement, src: string): void => {
+export const optimizeImageLoading = (
+  imageElement: HTMLImageElement,
+  src: string
+): void => {
   // Preload the full quality image
-  preloadImage(src).then(() => {
-    // Once preloaded, switch to the full quality image
-    imageElement.src = src;
-  }).catch(error => {
-    console.error('Error preloading image:', error);
-    // On error, still try to load the original image
-    imageElement.src = src;
-  });
+  preloadImage(src)
+    .then(() => {
+      // Once preloaded, switch to the full quality image
+      imageElement.src = src;
+    })
+    .catch((error) => {
+      console.error("Error preloading image:", error);
+      // On error, still try to load the original image
+      imageElement.src = src;
+    });
 };
