@@ -1,0 +1,308 @@
+/* Twitter-like styling */
+
+/* Tweet card */
+.tweet-card {
+  transition: all 0.2s ease;
+  border-radius: 12px;
+  background-color: var(--color-main-bg);
+  border: 1px solid var(--color-light-bg);
+}
+
+.tweet-card:hover {
+  background-color: var(--color-light-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .tweet-card:hover {
+  background-color: var(--color-dark-bg);
+}
+
+/* User avatar */
+.tweet-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-light-bg);
+}
+
+/* Simplified tweet stats styling */
+.flex.text-gray-500.text-sm.space-x-4 {
+  padding: 8px 0;
+  border-top: 1px solid var(--color-light-bg);
+  margin-top: 8px;
+}
+
+.flex.text-gray-500.text-sm.space-x-4 .flex.items-center {
+  transition: color 0.2s ease;
+  color: var(--color-main-light-text);
+}
+
+.flex.text-gray-500.text-sm.space-x-4 .flex.items-center:hover {
+  color: var(--color-main-accent);
+}
+
+/* Verified badge */
+.verified-badge {
+  color: var(--color-main-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-light-bg);
+  border-radius: 50%;
+  padding: 2px;
+  margin-left: 2px;
+}
+
+.dark .verified-badge {
+  color: var(--color-main-accent);
+}
+
+/* Removed tweet composer styles */
+
+/* Tweet text */
+.tweet-text {
+  line-height: 1.5;
+  word-break: break-word;
+  font-size: 15px;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  color: var(--color-main-text);
+  font-family: var(--font-tiktok);
+}
+
+.tweet-text a {
+  color: var(--color-main-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.tweet-text a:hover {
+  text-decoration: underline;
+  color: var(--color-main-highlight);
+}
+
+/* Media styles */
+.tweet-media img {
+  transition: all 0.2s ease-in-out;
+}
+
+.tweet-media:hover img {
+  transform: scale(1.02);
+}
+
+/* Fullscreen overlay */
+.tweet-media .opacity-0 {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Reply styling */
+.reply-line {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.reply-line:hover {
+  border-color: var(--color-main-highlight);
+}
+
+.tweet-media:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+.tweet-media .bg-black {
+  background-color: transparent;
+}
+
+.tweet-media:hover .group-hover\:bg-opacity-20 {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Status indicator */
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  animation: pulse 2s infinite;
+}
+
+.status-indicator.connected {
+  background-color: var(--color-main-bg);
+  box-shadow: 0 0 0 2px var(--color-main-accent);
+}
+
+.status-indicator.disconnected {
+  background-color: var(--color-main-bg);
+  box-shadow: 0 0 0 2px var(--color-main-error);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 48px 0;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  background-color: var(--color-main-bg);
+  border: 1px solid var(--color-light-bg);
+}
+
+.empty-state-icon {
+  color: var(--color-main-accent);
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-state-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.empty-state-message {
+  color: var(--color-main-light-text);
+  font-size: 15px;
+  font-family: var(--font-tiktok);
+}
+
+.dark .empty-state-message {
+  color: var(--color-main-light-text);
+}
+
+.connection-status {
+  transition: background-color 0.3s ease;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: var(--font-tiktok);
+  color: var(--color-main-light-text);
+  background-color: var(--color-main-bg);
+  border: 1px solid var(--color-light-bg);
+}
+
+/* Hide page scrollbars */
+html, body {
+  overflow: hidden;
+}
+
+/* Tweets container - keep scrollable */
+.tweets-container {
+  height: calc(100vh - 150px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-light-bg) var(--color-main-bg);
+}
+
+.tweets-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tweets-container::-webkit-scrollbar-track {
+  background: var(--color-main-bg);
+}
+
+.tweets-container::-webkit-scrollbar-thumb {
+  background-color: var(--color-main-bg);
+  border-radius: 20px;
+}
+
+/* Tweets section */
+.tweets-section {
+  height: 100%;
+  overflow: visible;
+}
+
+/* Tokens section */
+.tokens-container {
+  position: sticky;
+  top: 100px;
+  height: calc(100vh - 170px);
+  overflow: hidden;
+}
+
+.tokens-section {
+  height: 100%;
+  transition: all 0.2s ease;
+  border-radius: 12px;
+  background-color: var(--color-main-bg);
+  border: 1px solid var(--color-light-bg);
+  overflow: hidden;
+}
+
+.tokens-section h2 {
+  color: var(--color-main-text);
+  border-bottom: 1px solid var(--color-light-bg);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  
+  .tokens-section {
+    margin-top: 1.5rem;
+    height: auto;
+    max-height: 70vh;
+  }
+}
+
+/* Crypto Tweet Panel */
+.tweet-panel {
+  background: radial-gradient(800px 400px at 100% 0%, rgba(78, 118, 255, 0.06) 0%, rgba(78, 118, 255, 0) 60%),
+              radial-gradient(600px 300px at 0% 100%, rgba(0, 255, 163, 0.06) 0%, rgba(0, 255, 163, 0) 60%),
+              linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%),
+              var(--color-main-bg);
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.02);
+  border-radius: 14px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.tweet-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0,0,0,0.4), 0 0 20px rgba(78,118,255,0.15);
+  border-color: rgba(78,118,255,0.25);
+}
+
+/* Neon effects */
+.neon-text {
+  text-shadow: 0 0 4px rgba(78,118,255,0.4);
+}
+
+.glow-accent {
+  box-shadow: 0 0 8px rgba(78,118,255,0.3);
+}
+
+.dim-glow {
+  text-shadow: 0 0 2px rgba(0,255,163,0.2);
+}
+
+.crypto-text {
+  color: var(--color-main-text);
+  text-shadow: 0 0 2px rgba(255,255,255,0.1);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 12px rgba(0,255,163,0.25);
+}
