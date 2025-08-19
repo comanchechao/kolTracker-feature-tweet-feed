@@ -53,7 +53,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     tokenName: "",
     tokenSymbol: "",
   });
-  const [imagesLoaded] = useState(false);
+
   const [isVisible, setIsVisible] = useState(false);
   const tweetRef = useRef<HTMLDivElement>(null);
 
@@ -191,13 +191,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     let selectionTimer: NodeJS.Timeout;
     let mouseUpTimer: NodeJS.Timeout;
 
-    const handleClickOutside = () => {
-      // Only hide context menu if clicking outside the context menu itself
-      const target = event?.target as Element;
-      if (target && !target.closest(".context-menu")) {
-        setShowContextMenu(false);
-      }
-    };
+
 
     const showContextMenuForSelection = () => {
       const selection = window.getSelection();
@@ -415,7 +409,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                   alt="Tweet media"
                   className="w-full h-56 object-cover rounded-sm border border-white/10 transition-transform duration-200  "
                   priority={true}
-                  onLoad={() => setImagesLoaded(true)}
                 />
               )}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
@@ -490,7 +483,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                             alt="Quoted tweet media"
                             className="w-full h-36 object-cover rounded-sm transition-transform duration-200  "
                             priority={true}
-                            onLoad={() => setImagesLoaded(true)}
                           />
                         )}
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
