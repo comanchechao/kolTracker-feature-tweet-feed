@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Icon } from "@iconify/react";
+import { createPortal } from "react-dom";
 import "../../../css/twitter.css";
 import { motion } from "framer-motion";
 import { Tweet as TweetMock } from "../../../services/twitterWebSocketService";
@@ -7,6 +8,33 @@ import ImageModal from "../../../components/ImageModal";
 import LaunchTokenModal from "../../tweets/components/LaunchTokenModal";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import OptimizedImage from "./OptimizedImage";
+import { useToastContext } from "../../../contexts/ToastContext";
+
+// Function to convert strings to initials or abbreviated forms
+const convertToAbbreviation = (text: string): string => {
+  if (!text || text.trim().length === 0) return "";
+
+  let cleanText = text.trim();
+
+  // Remove @ and # prefixes from words
+  cleanText = cleanText.replace(/[@#]/g, "");
+
+  const words = cleanText.split(/\s+/).filter((word) => word.length > 0);
+
+  // For 1-2 words, keep them clean but uppercase
+  if (words.length <= 2) {
+    const combined = words.join("").toUpperCase();
+    // If the combined result is too long (more than 8 characters), use initials
+    if (combined.length > 8) {
+      return words.map((word) => word.charAt(0).toUpperCase()).join("");
+    }
+    return combined;
+  }
+
+  // For 3+ words, use initials
+  return words.map((word) => word.charAt(0).toUpperCase()).join("");
+};
+
 interface TweetProps {
   tweet: TweetMock;
 }
@@ -20,10 +48,22 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
   // State for image modal and launch token modal
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
-  const [isLaunchTokenModalOpen, setIsLaunchTokenModalOpen] = useState(false);
+  const [showLaunchTokenModal, setShowLaunchTokenModal] = useState(false);
+  const [modalInitialValues, setModalInitialValues] = useState({
+    tokenName: "",
+    tokenSymbol: "",
+  });
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const tweetRef = useRef<HTMLDivElement>(null);
+
+  // State for text selection context menu
+  const [selectedText, setSelectedText] = useState("");
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({
+    x: 0,
+    y: 0,
+  });
 
   // Use Intersection Observer to detect when tweet is visible
   useEffect(() => {
@@ -54,6 +94,9 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
 
   // Check if viewing on mobile
   const isMobile = useIsMobile();
+
+  // Toast context for error messages
+  const { showError } = useToastContext();
 
   // Get the tweet URL for the LaunchTokenModal
   const tweetUrl = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`;
@@ -90,13 +133,13 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
         return `${formattedTime} · ${diffInSeconds}s ago`;
       } else if (diffInSeconds < 3600) {
         const minutes = Math.floor(diffInSeconds / 60);
-        return `${formattedTime} · ${minutes}m ago`;
+        return `${minutes}m ago`;
       } else if (diffInSeconds < 86400) {
         const hours = Math.floor(diffInSeconds / 3600);
-        return `${formattedTime} · ${hours}h ago`;
+        return `${hours}h ago`;
       } else {
         const days = Math.floor(diffInSeconds / 86400);
-        return `${formattedTime} · ${days}d ago`;
+        return `${days}d ago`;
       }
     }
   };
@@ -105,6 +148,134 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.stopPropagation();
   };
+
+  // Handle context menu option selection
+  const handleContextMenuOption = (option: string) => {
+    console.log(`Selected option: ${option} for text: "${selectedText}"`);
+    setShowContextMenu(false);
+
+    const abbreviation = convertToAbbreviation(selectedText);
+
+    switch (option) {
+      case "Auto":
+        // Open LaunchTokenModal with selected text as Name and abbreviation as Symbol
+        setModalInitialValues({
+          tokenName: selectedText,
+          tokenSymbol: abbreviation,
+        });
+        setShowLaunchTokenModal(true);
+        break;
+      case "Full":
+        // Open LaunchTokenModal with selected text as Name and abbreviation as Symbol
+        setModalInitialValues({
+          tokenName: selectedText,
+          tokenSymbol: abbreviation,
+        });
+        setShowLaunchTokenModal(true);
+        break;
+      case "Rapid":
+        // Show error toast message
+        showError("Token Deployment", "Failed to create token deployment");
+        break;
+      case "Name":
+        // Open LaunchTokenModal with only Name filled
+        setModalInitialValues({ tokenName: selectedText, tokenSymbol: "" });
+        setShowLaunchTokenModal(true);
+        break;
+      default:
+        break;
+    }
+
+    window.getSelection()?.removeAllRanges();
+  };
+
+  // Handle selection changes and close context menu when clicking elsewhere
+  useEffect(() => {
+    let selectionTimer: NodeJS.Timeout;
+    let mouseUpTimer: NodeJS.Timeout;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      // Only hide context menu if clicking outside the context menu itself
+      const target = e.target as Element;
+      if (target && !target.closest(".context-menu")) {
+        setShowContextMenu(false);
+      }
+    };
+
+    const showContextMenuForSelection = () => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().trim().length >= 2) {
+        const selectedText = selection.toString().trim();
+        // Only show context menu if text length is between 2 and 100 characters
+        if (selectedText.length >= 2 && selectedText.length <= 100) {
+          const tweetElement = tweetRef.current;
+          if (
+            tweetElement &&
+            selection.anchorNode &&
+            tweetElement.contains(selection.anchorNode)
+          ) {
+            setSelectedText(selectedText);
+            // Update final position based on selection bounds
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            setContextMenuPosition({ x: rect.right + 10, y: rect.bottom + 5 });
+            setShowContextMenu(true);
+          }
+        }
+      } else if (selection && selection.toString().trim().length === 0) {
+        // Only hide menu if selection is completely empty and we're not in the middle of selecting
+        // Add a small delay to prevent flickering during selection
+        setTimeout(() => {
+          const currentSelection = window.getSelection();
+          if (
+            currentSelection &&
+            currentSelection.toString().trim().length === 0
+          ) {
+            setShowContextMenu(false);
+          }
+        }, 150);
+      }
+    };
+
+    const handleSelectionChange = () => {
+      // Debounce selection changes to improve performance
+      clearTimeout(selectionTimer);
+      selectionTimer = setTimeout(showContextMenuForSelection, 100);
+    };
+
+    const handleGlobalMouseUp = (e: MouseEvent) => {
+      // Debounce mouse up events to improve performance
+      clearTimeout(mouseUpTimer);
+      mouseUpTimer = setTimeout(showContextMenuForSelection, 50);
+    };
+
+    const handleGlobalMouseDown = (e: MouseEvent) => {
+      // Only hide context menu if clicking outside the context menu and outside the tweet
+      const target = e.target as Element;
+      const tweetElement = tweetRef.current;
+
+      if (
+        target &&
+        !target.closest(".context-menu") &&
+        tweetElement &&
+        !tweetElement.contains(target)
+      ) {
+        setShowContextMenu(false);
+      }
+    };
+
+    document.addEventListener("mouseup", handleGlobalMouseUp);
+    document.addEventListener("mousedown", handleGlobalMouseDown);
+    document.addEventListener("selectionchange", handleSelectionChange);
+
+    return () => {
+      clearTimeout(selectionTimer);
+      clearTimeout(mouseUpTimer);
+      document.removeEventListener("mouseup", handleGlobalMouseUp);
+      document.removeEventListener("mousedown", handleGlobalMouseDown);
+      document.removeEventListener("selectionchange", handleSelectionChange);
+    };
+  }, []);
 
   // Process tweet text to render links, mentions, and hashtags
   const renderTweetText = (text: string) => {
@@ -155,7 +326,12 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       });
     }
 
-    return <div dangerouslySetInnerHTML={{ __html: processedText }} />;
+    return (
+      <div
+        dangerouslySetInnerHTML={{ __html: processedText }}
+        style={{ userSelect: "text" }}
+      />
+    );
   };
 
   return (
@@ -164,6 +340,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
+      whileHover={{ scale: 1.005 }}
     >
       <div className="    border bg-gradient-to-tl from-black/40 via-black/60 to-white/10 border-white/10 rounded-sm p-6 mb-4 transition-all duration-200 hover:bg-black/40 hover:border-white/20 relative overflow-hidden">
         {/* Subtle accent line */}
@@ -202,7 +379,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setIsLaunchTokenModalOpen(true);
+                    setShowLaunchTokenModal(true);
                   }}
                   className="flex items-center gap-2 md:px-4 md:py-2 px-3 py-2 text-sm font-medium text-white transition-all duration-200 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-white/30 rounded-sm"
                 >
@@ -417,6 +594,54 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
           </div>
         </div>
       </div>
+
+      {/* Text Selection Context Menu - Rendered as Portal */}
+      {showContextMenu &&
+        createPortal(
+          <div
+            className="fixed z-[9999] bg-black/90 rounded-sm border border-white/20 shadow-lg p-1 context-menu"
+            style={{
+              left: contextMenuPosition.x,
+              top: contextMenuPosition.y - 60,
+              transform: "translateX(-50%)",
+              pointerEvents: "auto",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex gap-1">
+              <button
+                onClick={() => handleContextMenuOption("Auto")}
+                className="flex items-center gap-1 px-3 py-2 text-sm text-main-text hover:bg-white/10 rounded-sm transition-colors duration-200"
+              >
+                <Icon icon="mdi:auto-fix" className="w-4 h-4" />
+                Auto
+              </button>
+              <button
+                onClick={() => handleContextMenuOption("Rapid")}
+                className="flex items-center gap-1 px-3 py-2 text-sm text-main-text hover:bg-white/10 rounded-sm transition-colors duration-200"
+              >
+                <Icon icon="mdi:flash" className="w-4 h-4" />
+                Rapid
+              </button>
+              <button
+                onClick={() => handleContextMenuOption("Full")}
+                className="flex items-center gap-1 px-3 py-2 text-sm text-main-text hover:bg-white/10 rounded-sm transition-colors duration-200"
+              >
+                <Icon icon="mdi:fullscreen" className="w-4 h-4" />
+                Full
+              </button>
+              <button
+                onClick={() => handleContextMenuOption("Name")}
+                className="flex items-center gap-1 px-3 py-2 text-sm text-main-text hover:bg-white/10 rounded-sm transition-colors duration-200"
+              >
+                <Icon icon="mdi:account" className="w-4 h-4" />
+                Name
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
+
       {/* Image Modal for fullscreen view */}
       <ImageModal
         isOpen={isImageModalOpen}
@@ -426,9 +651,14 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
 
       {/* Launch Token Modal */}
       <LaunchTokenModal
-        isOpen={isLaunchTokenModalOpen}
-        onClose={() => setIsLaunchTokenModalOpen(false)}
+        isOpen={showLaunchTokenModal}
+        onClose={() => {
+          setShowLaunchTokenModal(false);
+          setModalInitialValues({ tokenName: "", tokenSymbol: "" });
+        }}
         initialTwitterUrl={tweetUrl}
+        initialTokenName={modalInitialValues.tokenName}
+        initialTokenSymbol={modalInitialValues.tokenSymbol}
       />
     </motion.div>
   );
