@@ -242,7 +242,7 @@ const BonkTrendingFeed: React.FC<BonkTrendingFeedProps> = React.memo(
     }, []);
 
     return (
-      <div className="relative   bg-white/[0.03] border border-white/[0.1] rounded-3xl h-fit py-4 px-6 transition-all duration-500">
+      <div className="relative   bg-white/[0.03] border border-white/[0.1] rounded-sm h-fit py-4 px-6 transition-all duration-500">
         <div className="flex flex-col gap-4 mb-4 relative z-10">
           <div className="flex items-center justify-between">
             <h2 className="font-algance text-xl text-main-text">

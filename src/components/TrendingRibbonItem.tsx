@@ -140,7 +140,7 @@ const TrendingRibbonItem: React.FC<TrendingRibbonItemProps> = React.memo(
     ]);
 
     return (
-      <div className="flex-shrink-0 bg-white/[0.03] border border-white/[0.08] rounded-xl p-3 hover:bg-white/[0.06] hover:border-main-accent/30 transition-all duration-300 min-w-[400px] mx-2">
+      <div className="flex-shrink-0 bg-white/[0.03] border border-white/[0.08] rounded-sm p-3 hover:bg-white/[0.06] hover:border-main-accent/30 transition-all duration-300 min-w-[400px] mx-2">
         <div className="flex items-center justify-between">
           {/* Token Info */}
           <div className="flex items-center space-x-3 flex-1 min-w-0">
@@ -205,7 +205,7 @@ const TrendingRibbonItem: React.FC<TrendingRibbonItemProps> = React.memo(
             <button
               onClick={handleBuyToken}
               disabled={buyLoading}
-              className="bg-white/[0.05] cursor-pointer  hover:bg-white/[0.08] border border-white/[0.1] hover:border-green-400/50 rounded-lg px-2 py-1 transition-all duration-300"
+              className="bg-white/[0.05] cursor-pointer  hover:bg-white/[0.08] border border-white/[0.1] hover:border-green-400/50 rounded-sm px-2 py-1 transition-all duration-300"
             >
               <div className="flex items-center gap-1">
                 {buyLoading ? (
@@ -228,7 +228,7 @@ const TrendingRibbonItem: React.FC<TrendingRibbonItemProps> = React.memo(
             <button
               onClick={handleSellToken}
               disabled={sellLoading}
-              className="bg-white/[0.05] cursor-pointer  hover:bg-white/[0.08] border border-white/[0.1] hover:border-red-400/50 rounded-lg px-2 py-1 transition-all duration-300"
+              className="bg-white/[0.05] cursor-pointer  hover:bg-white/[0.08] border border-white/[0.1] hover:border-red-400/50 rounded-sm px-2 py-1 transition-all duration-300"
             >
               <div className="flex items-center gap-1">
                 {sellLoading ? (
@@ -250,7 +250,7 @@ const TrendingRibbonItem: React.FC<TrendingRibbonItemProps> = React.memo(
 
             <button
               onClick={handleTokenClick}
-              className="bg-white/[0.05] cursor-pointer  hover:bg-white/[0.08] border border-white/[0.1] hover:border-main-accent/50 rounded-lg p-1 transition-all duration-300"
+              className="bg-white/[0.05] cursor-pointer  hover:bg-white/[0.08] border border-white/[0.1] hover:border-main-accent/50 rounded-sm p-1 transition-all duration-300"
             >
               <Icon
                 icon="material-symbols:open-in-new"

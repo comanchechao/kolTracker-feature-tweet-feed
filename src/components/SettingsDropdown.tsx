@@ -86,36 +86,36 @@ const SettingsDropdown: React.FC = () => {
       {/* Settings Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center cursor-pointer space-x-2 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-main-accent/30 px-4 py-2.5 rounded-xl transition-all duration-300 group"
+        className="flex items-center gap-3 px-5 py-2 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-white/30 rounded-sm transition-all duration-200 group cursor-pointer"
         style={{
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
         }}
         aria-label="Settings"
       >
+        <span className="font-tiktok text-sm text-main-text group-hover:text-main-accent transition-colors duration-300">
+          Buy: {quickBuyAmount} SOL | Sell: {quickSellPercentage}%
+        </span>
         <Icon
           icon="material-symbols:settings"
           className={`w-5 h-5 text-main-light-text group-hover:text-main-accent transition-all duration-300 ${
             isOpen ? "rotate-45 text-main-accent" : ""
           }`}
         />
-        <span className="font-tiktok text-sm text-main-text group-hover:text-main-accent transition-colors duration-300">
-          Buy: {quickBuyAmount} SOL | Sell: {quickSellPercentage}%
-        </span>
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className="absolute top-full right-0 mt-2 w-80 bg-[var(--color-main-bg)]/95 border border-white/[0.15] rounded-2xl shadow-2xl shadow-[var(--color-main-accent)]/10 p-6 z-[100]"
+          className="absolute top-full right-0 mt-2 w-80 bg-[var(--color-main-bg)]/95 border border-white/[0.15] rounded-sm shadow-2xl shadow-[var(--color-main-accent)]/10 p-6 z-[100]"
           style={{
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
-            background: "rgba(0, 8, 20, 0.99)",
+            background: "#090909",
           }}
         >
           {/* Overlay for additional blur effect */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.08] to-transparent opacity-100 transition-opacity duration-500 -z-10"></div>
+          <div className="absolute inset-0 rounded-sm bg-gradient-to-br from-white/[0.08] to-transparent opacity-100 transition-opacity duration-500 -z-10"></div>
 
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
@@ -187,7 +187,7 @@ const SettingsDropdown: React.FC = () => {
                       onChange={handleBuyInputChange}
                       onKeyDown={handleKeyPress}
                       placeholder="Enter amount (0.0001-100)"
-                      className="w-full px-4 py-3 bg-white/[0.05] border border-white/[0.1] focus:border-green-400/50 rounded-xl font-tiktok text-sm text-main-text placeholder-main-light-text/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-400/20"
+                      className="w-full px-4 py-3 bg-white/[0.05] border border-white/[0.1] focus:border-green-400/50  rounded-sm font-tiktok text-sm text-main-text placeholder-main-light-text/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-400/20"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                       <Icon
@@ -241,7 +241,7 @@ const SettingsDropdown: React.FC = () => {
                       onChange={handleSellInputChange}
                       onKeyDown={handleKeyPress}
                       placeholder="Enter percentage (10-100)"
-                      className="w-full px-4 py-3 bg-white/[0.05] border border-white/[0.1] focus:border-red-400/50 rounded-xl font-tiktok text-sm text-main-text placeholder-main-light-text/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-400/20"
+                      className="w-full px-4 py-3 bg-white/[0.05] border border-white/[0.1] focus:border-red-400/50  rounded-sm font-tiktok text-sm text-main-text placeholder-main-light-text/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-400/20"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                       <span className="font-tiktok text-sm text-red-400">
@@ -297,7 +297,7 @@ const SettingsDropdown: React.FC = () => {
                   setTempBuyAmount(quickBuyAmount.toString());
                   setTempSellPercentage(quickSellPercentage.toString());
                 }}
-                className="flex-1 px-4 py-2.5 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] rounded-xl font-tiktok text-sm text-main-light-text hover:text-main-text transition-all duration-300"
+                className="flex-1 px-4 py-2.5 bg-white/[0.05] cursor-pointer hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2]  rounded-sm font-tiktok text-sm text-main-light-text hover:text-main-text transition-all duration-300"
               >
                 Cancel
               </button>
@@ -313,7 +313,7 @@ const SettingsDropdown: React.FC = () => {
                       parseInt(tempSellPercentage) < 10 ||
                       parseInt(tempSellPercentage) > 100
                 }
-                className="flex-1 relative overflow-hidden cursor-pointer bg-white/[0.05] hover:from-main-accent/90 hover:to-main-highlight/90 px-4 py-2.5 rounded-xl font-tiktok text-sm text-main-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/[0.1] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300"
+                className="flex-1 relative overflow-hidden cursor-pointer bg-white/[0.05] hover:from-main-accent/90 hover:to-main-highlight/90 px-4 py-2.5  rounded-sm font-tiktok text-sm text-main-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/[0.1] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300"
               >
                 <span className="relative z-10">
                   Set {activeTab === "buy" ? "Amount" : ""}

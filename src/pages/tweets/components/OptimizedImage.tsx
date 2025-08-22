@@ -26,7 +26,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const srcSet = `${smallSrc} 400w, ${src} 800w`;
   
   return (
-    <div className="relative">
+    <div className="relative flex items-center justify-center content-center">
       <img
         src={src}
         srcSet={srcSet}

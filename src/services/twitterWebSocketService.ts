@@ -333,11 +333,11 @@ const generateRandomTweet = (
   // Randomly add an image (30% chance for regular tweets, 50% for quotes)
   const shouldAddImage = isQuote ? Math.random() < 0.5 : Math.random() < 0.3;
   if (shouldAddImage) {
-    const imageUrl = imageUrls[Math.floor(Math.random() * imageUrls.length)];
+    const imageUrl = Math.floor(Math.random() * 19) + 1;
     // Add a random seed to prevent caching
-    const uniqueImageUrl = `${imageUrl}?seed=${Math.floor(
+    const uniqueImageUrl = '/sample_tweet_pics/Sample_pic_' + imageUrl + '.jpg'   /* `${imageUrl}?seed=${Math.floor(
       Math.random() * 1000
-    )}`;
+    )}` */;
 
     if (!entities.media) {
       entities.media = [];

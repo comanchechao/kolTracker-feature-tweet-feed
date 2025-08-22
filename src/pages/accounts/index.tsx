@@ -515,7 +515,6 @@ const AccountsPage: React.FC = () => {
     return (
       <MainLayout>
         <div className="min-h-screen bg-main-bg relative overflow-hidden">
-          <Navbar />
           <div
             className="absolute inset-0 opacity-[0.03] pointer-events-none"
             style={{
@@ -762,7 +761,10 @@ const AccountsPage: React.FC = () => {
   if (kolError || !kolData) {
     return (
       <MainLayout>
-        <Navbar />
+        <Navbar
+          isSettingsModalOpen={isSettingsModalOpen}
+          setIsSettingsModalOpen={setIsSettingsModalOpen}
+        />
         <div className="min-h-screen flex items-center justify-center bg-main-bg">
           <div className="text-center">
             <Icon
@@ -782,7 +784,10 @@ const AccountsPage: React.FC = () => {
     <MainLayout>
       <div className="min-h-screen bg-main-bg relative overflow-hidden">
         {/* Texture Overlay */}
-        <Navbar />
+        <Navbar
+          isSettingsModalOpen={isSettingsModalOpen}
+          setIsSettingsModalOpen={setIsSettingsModalOpen}
+        />
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
           style={{

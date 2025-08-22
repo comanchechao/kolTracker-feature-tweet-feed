@@ -44,7 +44,7 @@ interface TokensResponse {
 
 const TokenCardSkeleton: React.FC = () => {
   return (
-    <div className="  bg-white/[0.03] border border-white/[0.1] rounded-3xl p-6">
+    <div className="  bg-white/[0.03] border border-white/[0.1] rounded-sm p-6">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-4">
@@ -316,7 +316,6 @@ const TokensPage: React.FC = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
         <div className="min-h-screen bg-gradient-to-br from-main-bg via-main-bg to-main-bg-dark">
           <div className="container mx-auto px-4 py-8">
             <BackButton />
@@ -363,7 +362,6 @@ const TokensPage: React.FC = () => {
   if (error) {
     return (
       <>
-        <Navbar />
         <div className="min-h-screen bg-gradient-to-br from-main-bg via-main-bg to-main-bg-dark">
           <div className="container mx-auto px-4 py-8">
             <BackButton />
@@ -385,7 +383,6 @@ const TokensPage: React.FC = () => {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen pt-20 bg-gradient-to-br from-main-bg via-main-bg to-main-bg-dark">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6">

@@ -161,7 +161,7 @@ const HomepageSearch: React.FC<HomepageSearchProps> = memo(
 
     return (
       <div className={`relative w-full ${className}`}>
-        <div className="relative   bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-main-accent/50 rounded-2xl transition-all duration-300">
+        <div className="relative   bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-main-accent/50 rounded-sm mt-1 transition-all duration-300">
           {/* Search Icon */}
           <Icon
             icon="icon-park-twotone:search"

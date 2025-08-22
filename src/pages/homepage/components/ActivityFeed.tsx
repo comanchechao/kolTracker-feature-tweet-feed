@@ -105,36 +105,36 @@ const ActivityFeed: React.FC<ActivityFeedProps> = React.memo(
     }, []);
 
     return (
-      <div className="relative   bg-white/[0.03] border border-white/[0.1] rounded-3xl py-4 px-6 transition-all duration-500">
-        <div className="flex items-center justify-between mb-4 relative z-10">
-          <h2 className="font-algance text-xl text-main-text">
+      <div className=" min-w-[320px]    w-full bg-white/[0.03] border border-white/[0.1] rounded-sm transition-all duration-500">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-black/60">
+          <h2 className="font-algance text-lg text-main-text">
             Live KOL Activity
           </h2>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="font-tiktok text-sm text-main-light-text">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="font-tiktok text-xs text-main-light-text">
               Live
             </span>
           </div>
         </div>
+
+        {/* Activity Cards Container */}
         <div
           ref={feedRef || localFeedRef}
-          className="space-y-4 relative z-10 opacity-0"
+          className="space-y-2 p-2  w-full overflow-y-auto opacity-0"
         >
           {activities.map(renderActivity)}
         </div>
-        <div className="text-center flex justify-center mt-8 relative z-10">
+
+        {/* Footer with View All Button */}
+        <div className="p-4 border-t border-white/10 bg-black/40">
           <Link
             to="/leaderboard"
-            className="relative overflow-hidden w-fit   px-4 py-3 ml-4 z-50 transition-all flex gap-2 items-center ease-in shadow-2xl shadow-main-accent border border-main-accent/50 text-main-accent text-sm rounded-xl duration-300 cursor-pointer  "
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-main-accent/20 hover:bg-main-accent/30 border border-main-accent/50 hover:border-main-accent text-main-accent text-sm rounded-sm transition-all duration-300 cursor-pointer"
           >
-            <span className="flex gap-2 items-center">
-              View Full Leaderboard
-            </span>
-            <Icon
-              icon="material-symbols:arrow-right-alt"
-              className="ml-2 w-5 h-5"
-            />
+            <span className="font-tiktok">View Full Leaderboard</span>
+            <Icon icon="material-symbols:arrow-right-alt" className="w-4 h-4" />
           </Link>
         </div>
       </div>

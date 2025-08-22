@@ -321,8 +321,6 @@ const TradesPage: React.FC = () => {
         }}
       ></div>
 
-      <Navbar />
-
       <main className="relative z-10 pt-28 pb-20">
         <div className="max-w-7xl xl:max-w-[99rem] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Back Button */}

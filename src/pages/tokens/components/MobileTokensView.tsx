@@ -135,7 +135,7 @@ const MobileTokensView: React.FC<MobileTokensViewProps> = ({
   const filteredTokens = filterTokens(currentTokens);
 
   const TokenCardSkeleton: React.FC = () => (
-    <div className="bg-white/[0.03] border border-white/[0.1] rounded-3xl p-4 mb-4">
+    <div className="bg-white/[0.03] border border-white/[0.1] rounded-sm p-4 mb-4">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <Skeleton width={40} height={40} className="rounded-2xl" />
@@ -239,10 +239,12 @@ const MobileTokensView: React.FC<MobileTokensViewProps> = ({
             ))}
           </div>
         ) : filteredTokens.length === 0 ? (
-          <EmptyTokensState 
-            message={searchQuery.trim() 
-              ? "No tokens found matching your search criteria." 
-              : "Tokens will appear here once they're available."} 
+          <EmptyTokensState
+            message={
+              searchQuery.trim()
+                ? "No tokens found matching your search criteria."
+                : "Tokens will appear here once they're available."
+            }
           />
         ) : (
           <div className="space-y-4">

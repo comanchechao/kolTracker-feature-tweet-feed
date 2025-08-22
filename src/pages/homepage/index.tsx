@@ -19,6 +19,15 @@ import HomepageSearch from "../../components/HomepageSearch";
 import BottomStatusMenu from "../../components/BottomStatusMenu";
 import Navbar from "../../layouts/Navbar";
 import TrendingRibbon from "../../components/TrendingRibbon";
+import Tweet from "../tweets/components/Tweet";
+import LaunchTokenModal from "../tweets/components/LaunchTokenModal";
+import StatusMenu from "../tweets/components/StatusMenu";
+import TokensSection from "../tweets/components/TokensSection";
+import twitterWebSocketService, {
+  Tweet as TweetType,
+} from "../../services/twitterWebSocketService";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 const customAnimations = `
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -141,7 +150,83 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const feedRef = useRef<HTMLDivElement>(null);
 
+  // Tweet functionality
+  const [tweets, setTweets] = useState<TweetType[]>([]);
+  const [isTweetConnected, setIsTweetConnected] = useState(false);
+  const [tweetStatusMessage, setTweetStatusMessage] = useState("");
+  const [isTweetInitialLoading, setIsTweetInitialLoading] = useState(true);
+  const [isLaunchModalOpen, setIsLaunchModalOpen] = useState(false);
+  const [showTweetTokens, setShowTweetTokens] = useState(false);
+  const isTweetMobile = useIsMobile();
+
   const activitiesMapRef = useRef<Map<string, any>>(new Map());
+
+  // Tweet WebSocket functionality
+  useEffect(() => {
+    // Connect to the Twitter WebSocket service
+    const connectToTwitter = () => {
+      twitterWebSocketService.connect();
+    };
+
+    // Handle initial batch of tweets
+    const handleInitialTweets = (initialTweets: TweetType[]) => {
+      setTweets(initialTweets);
+      setIsTweetInitialLoading(false);
+    };
+
+    // Handle new tweets after initial batch
+    const handleNewTweet = (tweet: TweetType) => {
+      setTweets((prevTweets) => [tweet, ...prevTweets].slice(0, 50)); // Keep only the latest 50 tweets
+    };
+
+    // Handle connection status
+    const handleConnect = () => {
+      setIsTweetConnected(true);
+      setIsTweetInitialLoading(true);
+      setTweetStatusMessage("Connected to X stream");
+    };
+
+    // Handle disconnection
+    const handleDisconnect = () => {
+      setIsTweetConnected(false);
+      setIsTweetInitialLoading(false);
+      setTweetStatusMessage("Disconnected from X stream");
+    };
+
+    // Handle status messages
+    const handleStatus = (status: { type: string; message: string }) => {
+      setTweetStatusMessage(status.message);
+    };
+
+    // Register event listeners
+    twitterWebSocketService.on("initialTweets", handleInitialTweets);
+    twitterWebSocketService.on("tweet", handleNewTweet);
+    twitterWebSocketService.on("connect", handleConnect);
+    twitterWebSocketService.on("disconnect", handleDisconnect);
+    twitterWebSocketService.on("status", handleStatus);
+
+    // Connect to the service
+    connectToTwitter();
+
+    // Clean up event listeners on unmount
+    return () => {
+      twitterWebSocketService.off("initialTweets", handleInitialTweets);
+      twitterWebSocketService.off("tweet", handleNewTweet);
+      twitterWebSocketService.off("connect", handleConnect);
+      twitterWebSocketService.off("disconnect", handleDisconnect);
+      twitterWebSocketService.off("status", handleStatus);
+      twitterWebSocketService.disconnect();
+    };
+  }, []);
+
+  // Toggle tweet connection
+  const toggleTweetConnection = () => {
+    if (isTweetConnected) {
+      twitterWebSocketService.disconnect();
+    } else {
+      twitterWebSocketService.connect();
+    }
+  };
 
   const convertTradeToActivity = useCallback((trade: TradeData) => {
     if (!trade.transactionHash) {
@@ -368,25 +453,36 @@ const HomePage: React.FC = () => {
           <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-light-bg opacity-10 rounded-full"></div>
         </div>
 
-        <Navbar />
         <TrendingRibbon />
 
-        <div className="relative z-10 pt-10 pb-4">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="mb-8">
-              <h1 className="font-algance text-2xl md:text-4xl   text-main-text mb-1 leading-tight">
-                Track Elite Crypto
-                <span className="text-main-accent"> Traders on Bonk</span>
-              </h1>
-              <p className="font-algance text-xl md:text-2xl text-main-light-text mb-8">
-                Monitor Top Traders Activities in{" "}
-                <span className="text-main-highlight  ">Real-time</span>
-              </p>
+        {/* Mobile View Toggle - Floating Button */}
+        {isTweetMobile && (
+          <div className="fixed bottom-24 right-4 z-50">
+            <div className="relative">
+              {/* Toggle Button */}
+              <button
+                onClick={() => setShowTweetTokens(!showTweetTokens)}
+                className="group bg-black/80 border border-white/10 text-white rounded-sm p-4 shadow-lg transition-all duration-200 hover:bg-black/90 hover:border-white/20 active:scale-95"
+              >
+                <Icon
+                  icon={
+                    showTweetTokens
+                      ? "material-symbols:chat"
+                      : "material-symbols:token"
+                  }
+                  className="w-6 h-6"
+                />
+              </button>
+
+              {/* Tooltip */}
+              <div className="absolute -left-24 top-1/2 transform -translate-y-1/2 bg-black/90 text-white text-xs px-3 py-2 rounded-sm whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100 border border-white/10">
+                Switch to {showTweetTokens ? "Tweets" : "Tokens"}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Live Feed Section */}
+        {/* Live Feed Section with Sidebar Layout */}
         <div className="relative z-10 pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-2">
@@ -395,34 +491,110 @@ const HomePage: React.FC = () => {
                 <HomepageSearch className="w-full" />
               </div>
             </div>
-            {loading ? (
-              <div className="space-y-4 h-full overflow-y-auto no-scrollbar">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-main-dark p-4 rounded-lg shadow-lg flex items-center space-x-4 w-full"
-                  >
-                    <Skeleton
-                      width="100%"
-                      height={66}
-                      className="rounded-full flex-shrink-0"
-                    />
+
+            {/* Main Content and Activity Feed Sidebar */}
+            <div className="flex gap-6">
+              {/* Main Content Area */}
+              <div
+                className={`flex-1 ${
+                  isTweetMobile && showTweetTokens ? "hidden" : ""
+                }`}
+              >
+                {loading ? (
+                  <div className="space-y-4 h-full overflow-y-auto no-scrollbar">
+                    {[...Array(5)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="bg-main-dark p-4 rounded-lg shadow-lg flex items-center space-x-4 w-full"
+                      >
+                        <Skeleton
+                          width="100%"
+                          height={66}
+                          className="rounded-full flex-shrink-0"
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : error ? (
+                  <div className="text-center py-12">
+                    <p className="text-red-400 font-tiktok mb-4">{error}</p>
+                    <button
+                      onClick={fetchRecentTrades}
+                      className="px-6 py-2 bg-main-accent hover:bg-main-highlight text-main-bg font-tiktok rounded-xl transition-all duration-300"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : (
+                  <div className="bg-white/[0.03] border border-white/[0.1] rounded-sm p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-2">
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            isTweetConnected ? "bg-green-500" : "bg-red-500"
+                          }`}
+                        ></div>
+                        <span className="font-tiktok text-xs text-main-light-text">
+                          {isTweetConnected ? "Live" : "Offline"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Tweet Content */}
+                    <div className="space-y-4">
+                      {tweets.length === 0 ? (
+                        <div className="text-center py-8">
+                          <div className="mb-4">
+                            <Icon
+                              icon="line-md:twitter-x"
+                              className="w-12 h-12 text-main-accent mx-auto opacity-40"
+                            />
+                          </div>
+                          <h4 className="text-lg font-bold mb-2 font-tiktok text-main-text">
+                            No tweets yet
+                          </h4>
+                          <p className="text-sm text-main-light-text mb-4">
+                            {isTweetConnected
+                              ? "Waiting for tweets to arrive..."
+                              : "Connect to the X stream to see live tweets"}
+                          </p>
+                          {isTweetConnected && isTweetInitialLoading && (
+                            <LoadingSpinner size="sm" text="Loading tweets" />
+                          )}
+                        </div>
+                      ) : (
+                        tweets.map((tweet) => (
+                          <Tweet key={tweet.id_str} tweet={tweet} />
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            ) : error ? (
-              <div className="text-center py-12">
-                <p className="text-red-400 font-tiktok mb-4">{error}</p>
-                <button
-                  onClick={fetchRecentTrades}
-                  className="px-6 py-2 bg-main-accent hover:bg-main-highlight text-main-bg font-tiktok rounded-xl transition-all duration-300"
-                >
-                  Retry
-                </button>
+
+              {/* Tokens Section - Show on mobile when toggled */}
+              {isTweetMobile && showTweetTokens && (
+                <div className="flex-1">
+                  <div className="tokens-container">
+                    <TokensSection />
+                  </div>
+                </div>
+              )}
+
+              {/* Activity Feed Sidebar */}
+              <div
+                className={`hidden lg:block ${
+                  isTweetMobile && showTweetTokens ? "hidden" : ""
+                }`}
+              >
+                {!loading && !error && (
+                  <ActivityFeed
+                    activities={memoizedActivities}
+                    feedRef={feedRef}
+                  />
+                )}
               </div>
-            ) : (
-              <ActivityFeed activities={memoizedActivities} feedRef={feedRef} />
-            )}
+            </div>
           </div>
         </div>
 
@@ -487,9 +659,23 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Status Menu for Tweet Connection */}
+        <StatusMenu
+          isConnected={isTweetConnected}
+          statusMessage={tweetStatusMessage}
+          onToggleConnection={toggleTweetConnection}
+        />
+
         <BottomStatusMenu />
         <Footer />
       </div>
+
+      {/* Launch Token Modal */}
+      <LaunchTokenModal
+        isOpen={isLaunchModalOpen}
+        onClose={() => setIsLaunchModalOpen(false)}
+      />
     </>
   );
 };

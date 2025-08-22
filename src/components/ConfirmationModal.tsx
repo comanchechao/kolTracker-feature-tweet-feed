@@ -146,7 +146,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
       {/* Modal */}
       <div
-        className={`relative w-full max-w-md backdrop-blur-xl bg-white/[0.03] border border-white/[0.1] shadow-2xl rounded-2xl flex flex-col transition-all duration-300 transform 
+        className={`relative w-full max-w-md backdrop-blur-xl bg-black/[0.03] border border-white/[0.1] shadow-2xl rounded-2xl flex flex-col transition-all duration-300 transform 
           ${open ? "modal-content-show" : "opacity-0 scale-95 translate-y-8"}
           before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/[0.05] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:-z-10`}
         style={{ minWidth: 400, maxHeight: "85vh" }}

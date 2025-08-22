@@ -291,7 +291,7 @@ const AuthenticationModal: React.FC<AuthenticationModalProps> = ({
 
       {/* Modal */}
       <div
-        className={`relative w-full max-w-xs lg:max-w-md backdrop-blur-xl bg-white/[0.03] border border-white/[0.1] shadow-2xl rounded-2xl flex flex-col transition-all duration-300 transform 
+        className={`relative w-full max-w-xs lg:max-w-md backdrop-blur-xl bg-black/[0.03] border border-white/[0.1] shadow-2xl rounded-2xl flex flex-col transition-all duration-300 transform 
           ${open ? "modal-content-show" : "opacity-0 scale-95 translate-y-8"}
           before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/[0.05] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:-z-10`}
         style={{ minWidth: 280, maxHeight: "85vh" }}
@@ -351,14 +351,14 @@ const AuthenticationModal: React.FC<AuthenticationModalProps> = ({
               {stepConfig.title}
             </h3>
 
-            <p className="font-tiktok text-sm lg:text-base text-main-light-text/70">
+            <p className="font-tiktok text-sm lg:text-sm text-main-light-text/70">
               {stepConfig.message}
             </p>
 
             {/* Error Display */}
             {error && (
               <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
-                <p className="font-tiktok text-sm lg:text-base text-red-400">
+                <p className="font-tiktok text-sm lg:text-sm text-red-400">
                   {error}
                 </p>
               </div>
@@ -384,7 +384,7 @@ const AuthenticationModal: React.FC<AuthenticationModalProps> = ({
               disabled={isProcessing}
               className="flex-1 cursor-pointer bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] px-4 py-3 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
             >
-              <span className="font-tiktok text-sm lg:text-base text-main-light-text group-hover:text-main-text transition-colors duration-300">
+              <span className="font-tiktok text-sm lg:text-sm text-main-light-text group-hover:text-main-text transition-colors duration-300">
                 Cancel
               </span>
             </button>
@@ -403,14 +403,14 @@ const AuthenticationModal: React.FC<AuthenticationModalProps> = ({
                     className={`${stepConfig.iconColor} animate-spin`}
                   />
                   <span
-                    className={`font-tiktok text-sm lg:text-base ${stepConfig.iconColor}`}
+                    className={`font-tiktok text-sm lg:text-sm ${stepConfig.iconColor}`}
                   >
                     {stepConfig.buttonText}
                   </span>
                 </>
               ) : (
                 <span
-                  className={`font-tiktok text-sm lg:text-base ${stepConfig.iconColor}`}
+                  className={`font-tiktok text-sm lg:text-sm ${stepConfig.iconColor}`}
                 >
                   {stepConfig.buttonText}
                 </span>

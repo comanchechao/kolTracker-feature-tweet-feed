@@ -220,7 +220,7 @@ const TradesCard: React.FC<TradesCardProps> = React.memo(
     };
 
     return (
-      <div className="group  relative   bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.1] hover:border-main-accent/50 rounded-3xl p-4 lg:p-6 transition-all duration-500 hover:shadow-2xl hover:shadow-main-accent/10 before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-white/[0.05] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:-z-10">
+      <div className="group  relative   bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.1] hover:border-main-accent/50 rounded-sm p-4 lg:p-6 transition-all duration-500 hover:shadow-2xl hover:shadow-main-accent/10 before:absolute before:inset-0 before:rounded-smbefore:bg-gradient-to-br before:from-white/[0.05] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:-z-10">
         <div className="flex justify-between items-start mb-4 lg:mb-6">
           <div className="flex items-center space-x-3 lg:space-x-4">
             {/* Avatar */}
@@ -502,7 +502,7 @@ const TradesCard: React.FC<TradesCardProps> = React.memo(
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`relative overflow-hidden   rounded-lg p-2 transition-all duration-300 ${
+                className={`relative overflow-hidden rounded-sm p-2 transition-all duration-300 ${
                   currentPage === 1
                     ? "bg-white/[0.03] border border-white/[0.05] text-main-light-text/30 cursor-not-allowed"
                     : "bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] hover:border-main-accent/30 text-main-light-text hover:text-main-accent"
@@ -566,7 +566,7 @@ const TradesCard: React.FC<TradesCardProps> = React.memo(
                     <button
                       key={page}
                       onClick={() => handlePageChange(page as number)}
-                      className={`relative overflow-hidden   rounded-lg px-3 py-2 font-tiktok text-xs transition-all duration-300 ${
+                      className={`relative overflow-hidden rounded-sm px-3 py-2 font-tiktok text-xs transition-all duration-300 ${
                         page === currentPage
                           ? "bg-main-accent/20 border border-main-accent/50 text-main-accent"
                           : "bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] hover:border-main-accent/30 text-main-light-text hover:text-main-accent"
@@ -582,7 +582,7 @@ const TradesCard: React.FC<TradesCardProps> = React.memo(
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`relative overflow-hidden   rounded-lg p-2 transition-all duration-300 ${
+                className={`relative overflow-hidden rounded-sm p-2 transition-all duration-300 ${
                   currentPage === totalPages
                     ? "bg-white/[0.03] border border-white/[0.05] text-main-light-text/30 cursor-not-allowed"
                     : "bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] hover:border-main-accent/30 text-main-light-text hover:text-main-accent"

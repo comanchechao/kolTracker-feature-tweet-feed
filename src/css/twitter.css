@@ -204,12 +204,6 @@
   border: 1px solid var(--color-light-bg);
 }
 
-/* Hide page scrollbars */
-html,
-body {
-  overflow: hidden;
-}
-
 /* Tweets container - keep scrollable */
 .tweets-container {
   height: calc(100vh - 200px);

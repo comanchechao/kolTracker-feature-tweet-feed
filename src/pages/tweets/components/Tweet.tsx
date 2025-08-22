@@ -53,7 +53,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     tokenName: "",
     tokenSymbol: "",
   });
-
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const tweetRef = useRef<HTMLDivElement>(null);
 
@@ -144,6 +144,11 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     }
   };
 
+  // Handle link clicks
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
+  };
+
   // Handle context menu option selection
   const handleContextMenuOption = (option: string) => {
     console.log(`Selected option: ${option} for text: "${selectedText}"`);
@@ -189,6 +194,14 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     let selectionTimer: NodeJS.Timeout;
     let mouseUpTimer: NodeJS.Timeout;
 
+    const handleClickOutside = (e: MouseEvent) => {
+      // Only hide context menu if clicking outside the context menu itself
+      const target = e.target as Element;
+      if (target && !target.closest(".context-menu")) {
+        setShowContextMenu(false);
+      }
+    };
+
     const showContextMenuForSelection = () => {
       const selection = window.getSelection();
       if (selection && selection.toString().trim().length >= 2) {
@@ -230,15 +243,15 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       selectionTimer = setTimeout(showContextMenuForSelection, 100);
     };
 
-    const handleGlobalMouseUp = () => {
+    const handleGlobalMouseUp = (e: MouseEvent) => {
       // Debounce mouse up events to improve performance
       clearTimeout(mouseUpTimer);
       mouseUpTimer = setTimeout(showContextMenuForSelection, 50);
     };
 
-    const handleGlobalMouseDown = () => {
+    const handleGlobalMouseDown = (e: MouseEvent) => {
       // Only hide context menu if clicking outside the context menu and outside the tweet
-      const target = event?.target as Element;
+      const target = e.target as Element;
       const tweetElement = tweetRef.current;
 
       if (
@@ -387,7 +400,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
           {/* Tweet Media (if any) */}
           {tweet.entities.media && tweet.entities.media.length > 0 && (
             <div
-              className="mt-3 mb-4 rounded-sm overflow-hidden tweet-media relative group cursor-pointer border border-white/10"
+              className="mt-3 mb-4 rounded-sm overflow-hidden items-center justify-center tweet-media relative group cursor-pointer border border-white/10"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -402,8 +415,9 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                 <OptimizedImage
                   src={tweet.entities.media[0].media_url_https}
                   alt="Tweet media"
-                  className="w-full h-56 object-cover rounded-sm border border-white/10 transition-transform duration-200  "
+                  className="h-full max-h-72 object-cover rounded-sm border border-white/10 transition-transform duration-200  "
                   priority={true}
+                  onLoad={() => setImagesLoaded(true)}
                 />
               )}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
@@ -476,8 +490,9 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                                 .media_url_https
                             }
                             alt="Quoted tweet media"
-                            className="w-full h-36 object-cover rounded-sm transition-transform duration-200  "
+                            className="h-full max-h-36 object-cover rounded-sm transition-transform duration-200  "
                             priority={true}
+                            onLoad={() => setImagesLoaded(true)}
                           />
                         )}
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
@@ -643,6 +658,13 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
         initialTwitterUrl={tweetUrl}
         initialTokenName={modalInitialValues.tokenName}
         initialTokenSymbol={modalInitialValues.tokenSymbol}
+        images={[
+          ...(tweet?.entities?.media?.[0]?.media_url_https ? [tweet.entities.media[0].media_url_https] : []),
+          ...(tweet.user.profile_image_url_https && [tweet.user.profile_image_url_https]),  
+          ...(tweet?.quoted_status?.entities?.media?.[0]?.media_url_https ? [tweet?.quoted_status?.entities?.media[0]?.media_url_https] : []),
+          ...(tweet?.quoted_status?.user?.profile_image_url_https ? [tweet?.quoted_status?.user?.profile_image_url_https] : []),
+          ...(tweet?.replied_to_tweet?.user?.profile_image_url_https ? [tweet?.replied_to_tweet?.user?.profile_image_url_https] : []),
+        ]}
       />
     </motion.div>
   );

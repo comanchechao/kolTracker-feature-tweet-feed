@@ -54,7 +54,7 @@ const TelegramLoginButton: React.FC = () => {
     <button
       onClick={handleTelegramLogin}
       disabled={isProcessing}
-      className="flex items-center cursor-pointer space-x-2 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-blue-400/30 px-4 py-2.5 rounded-xl transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex items-center gap-3 px-5 py-2 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-white/30 rounded-sm transition-all duration-200 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       style={{
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",

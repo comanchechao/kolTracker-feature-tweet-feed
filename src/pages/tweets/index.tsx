@@ -9,6 +9,7 @@ import LaunchTokenModal from "./components/LaunchTokenModal";
 import TokensSection from "./components/TokensSection";
 import Tweet from "./components/Tweet";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import DottedPattern from "../../components/DottedPattern";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { Icon } from "@iconify/react";
 
@@ -95,104 +96,8 @@ const TweetFeed: React.FC = () => {
         isSettingsModalOpen={isSettingsModalOpen}
         setIsSettingsModalOpen={setIsSettingsModalOpen}
       />
-      {/* SVG Background Pattern */}
-      <div className="fixed inset-0 z-30 pointer-events-none overflow-hidden w-screen h-screen">
-        <svg
-          className="absolute top-0 left-0 w-full h-full opacity-10"
-          viewBox="0 0 1000 1000"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-        >
-          <defs>
-            {/* Subtle grid pattern */}
-            <pattern
-              id="grid"
-              width="60"
-              height="60"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 60 0 L 0 0 0 60"
-                fill="none"
-                stroke="#e5e5e5"
-                strokeWidth="0.8"
-                opacity="0.3"
-              />
-            </pattern>
-
-            {/* Dots pattern */}
-            <pattern
-              id="dots"
-              width="120"
-              height="120"
-              patternUnits="userSpaceOnUse"
-            >
-              <circle cx="60" cy="60" r="1.5" fill="#e5e5e5" opacity="0.4" />
-            </pattern>
-
-            {/* Hexagonal pattern for modern tech feel */}
-            <pattern
-              id="hexagons"
-              width="100"
-              height="100"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 50 0 L 100 25 L 100 75 L 50 100 L 0 75 L 0 25 Z"
-                fill="none"
-                stroke="#d1d5db"
-                strokeWidth="0.5"
-                opacity="0.2"
-              />
-            </pattern>
-
-            {/* Subtle wave pattern */}
-            <pattern
-              id="waves"
-              width="200"
-              height="200"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 0 100 Q 50 80 100 100 T 200 100"
-                fill="none"
-                stroke="#f3f4f6"
-                strokeWidth="0.8"
-                opacity="0.15"
-              />
-              <path
-                d="M 0 120 Q 50 100 100 120 T 200 120"
-                fill="none"
-                stroke="#f3f4f6"
-                strokeWidth="0.8"
-                opacity="0.15"
-              />
-            </pattern>
-          </defs>
-
-          {/* Apply patterns with different opacities for depth */}
-          <rect width="100%" height="100%" fill="url(#grid)" />
-          <rect width="100%" height="100%" fill="url(#dots)" />
-          <rect width="100%" height="100%" fill="url(#hexagons)" />
-          <rect width="100%" height="100%" fill="url(#waves)" />
-
-          {/* Subtle gradient overlay for depth */}
-          <rect
-            width="100%"
-            height="100%"
-            fill="url(#gradient)"
-            opacity="0.05"
-          />
-
-          {/* Radial gradient definition */}
-          <defs>
-            <radialGradient id="gradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#f8fafc" stopOpacity="0.1" />
-              <stop offset="100%" stopColor="#e2e8f0" stopOpacity="0.05" />
-            </radialGradient>
-          </defs>
-        </svg>
-      </div>
+      {/* Dotted Background Pattern */}
+      <DottedPattern opacity={0.02} />
 
       <div className="  w-full  bg-black/40 mx-auto px-4 py-6 pb-20 relative z-10">
         {/* Mobile View Toggle - Floating Button */}
@@ -222,7 +127,7 @@ const TweetFeed: React.FC = () => {
           </div>
         )}
 
-        <div className="flex max-w-6xl mx-auto flex-col mt-24 lg:flex-row gap-6">
+        <div className="flex max-w-7xl mx-auto flex-col mt-24 lg:flex-row gap-6">
           {/* Tweets List - 2/3 width on desktop, hidden on mobile when showTokens is true */}
           <div className={`lg:w-2/3 ${isMobile && showTokens ? "hidden" : ""}`}>
             <div className="tweets-section bg-black/40 border border-white/5 rounded-sm shadow-lg">
@@ -249,7 +154,7 @@ const TweetFeed: React.FC = () => {
                       )}
                     </div>
                   ) : (
-                    <div className="space-y-4  ">
+                    <div className="space-y-4 p-7  ">
                       {tweets.map((tweet) => (
                         <Tweet key={tweet.id_str} tweet={tweet} />
                       ))}

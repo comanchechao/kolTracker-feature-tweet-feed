@@ -175,49 +175,74 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
       showError,
     ]);
 
+    // Format timestamp to show how long ago
+    const formatTimeAgo = (timestamp: string) => {
+      if (timestamp === "now") return "now";
+
+      const now = new Date();
+      const activityTime = new Date(timestamp);
+      const diffInSeconds = Math.floor(
+        (now.getTime() - activityTime.getTime()) / 1000
+      );
+
+      if (diffInSeconds < 60) {
+        return `${diffInSeconds}s ago`;
+      } else if (diffInSeconds < 3600) {
+        const minutes = Math.floor(diffInSeconds / 60);
+        return `${minutes}m ago`;
+      } else if (diffInSeconds < 86400) {
+        const hours = Math.floor(diffInSeconds / 3600);
+        return `${hours}h ago`;
+      } else {
+        const days = Math.floor(diffInSeconds / 86400);
+        return `${days}d ago`;
+      }
+    };
+
     return (
       <div
-        key={activity.id}
-        className={`relative bg-white/[0.03] border border-white/[0.08] rounded-2xl p-2 transition-all duration-300 ${
-          activity.timestamp === "now" ? "animate-slideInLeft" : ""
-        } ${
+        className={`relative bg-gradient-to-tl from-black/40 via-black/60 to-white/10 border border-white/10 rounded-sm p-3 transition-all duration-200 hover:bg-black/40 hover:border-white/20 overflow-hidden ${
           isFirst
-            ? "!border-[var(--color-main-highlight)] border-opacity-10"
+            ? "!border-[var(--color-main-highlight)] border-opacity-30"
             : ""
         }`}
       >
-        {/* Mobile Layout */}
-        <div className="lg:hidden flex flex-col relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full flex-shrink-0">
+        {/* Subtle accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-main-accent/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200"></div>
+
+        <div className="relative z-10">
+          {/* User Info Row */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-sm flex-shrink-0">
                 <img
                   src={activity.avatar}
-                  alt=""
-                  className="w-full h-full rounded-full object-cover"
+                  alt={`${activity.name}'s avatar`}
+                  className="w-full h-full rounded-sm object-cover border border-white/20"
                 />
               </div>
-              <Link
-                to={`/accounts/${activity.walletAddress}`}
-                className="font-tiktok font-medium text-main-text whitespace-nowrap cursor-pointer"
-              >
-                {activity.name}
-              </Link>
-            </div>
-            <div className="text-right">
-              <span className="font-tiktok text-xs text-main-light-text whitespace-nowrap">
-                {activity.timestamp}
-              </span>
+              <div className="flex flex-col">
+                <Link
+                  to={`/accounts/${activity.walletAddress}`}
+                  className="font-tiktok text-sm font-medium text-main-text hover:text-main-accent transition-colors duration-200 cursor-pointer"
+                >
+                  {activity.name}
+                </Link>
+                <span className="font-tiktok text-xs text-main-light-text">
+                  {formatTimeAgo(activity.timestamp)}
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="mt-2">
-            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-              <span className="font-tiktok text-sm text-main-light-text">
+          {/* Activity Content */}
+          <div className="mb-3">
+            <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
+              <span className="font-tiktok text-main-light-text">
                 {activity.action}
               </span>
               <span
-                className={`font-tiktok text-base cursor-pointer ${
+                className={`font-tiktok cursor-pointer ${
                   activity.type === "buy" ? "text-green-400" : "text-red-400"
                 }`}
                 onClick={handleTransactionClick}
@@ -225,23 +250,19 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
               >
                 {activity.amount}
               </span>
-              <span className="font-tiktok text-sm text-main-light-text">
-                of
-              </span>
+              <span className="font-tiktok text-main-light-text">of</span>
               <span
-                className="font-tiktok font-medium text-main-accent cursor-pointer"
+                className="font-tiktok font-medium text-main-accent cursor-pointer hover:text-main-highlight transition-colors duration-200"
                 onClick={handleTokenClick}
               >
                 {activity.token}
               </span>
-              <span className="font-tiktok text-sm text-main-light-text">
-                at
-              </span>
+              <span className="font-tiktok text-main-light-text">at</span>
               <span className="font-tiktok font-medium text-main-highlight">
                 {activity.price}
               </span>
               <span
-                className={`font-tiktok text-sm ${
+                className={`font-tiktok text-xs ${
                   activity.type === "buy" ? "text-green-400" : "text-red-400"
                 }`}
               >
@@ -250,167 +271,60 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
             </div>
           </div>
 
-          <div className="flex gap-2 mt-3">
+          {/* Action Buttons */}
+          <div className="flex gap-2">
             <button
               onClick={handleBuyToken}
               disabled={buyLoading}
-              className="flex-1 relative bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] hover:border-green-400/50 rounded-lg py-1.5 transition-all duration-300 cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-green-400/50 rounded-sm transition-all duration-200 cursor-pointer"
             >
-              <div className="flex items-center justify-center gap-1 relative z-10">
-                {buyLoading ? (
-                  <Icon
-                    icon="eos-icons:loading"
-                    className="w-3.5 h-3.5 text-green-400 animate-spin"
-                  />
-                ) : (
-                  <Icon
-                    icon="material-symbols:trending-up"
-                    className="w-3.5 h-3.5 text-green-400 transition-colors duration-300"
-                  />
-                )}
-                <span className="font-tiktok text-xs text-main-text transition-colors duration-300">
-                  {buyLoading ? "Buying..." : `Buy ${quickBuyAmount} SOL`}
-                </span>
-              </div>
+              {buyLoading ? (
+                <Icon
+                  icon="eos-icons:loading"
+                  className="w-3 h-3 text-green-400 animate-spin"
+                />
+              ) : (
+                <Icon
+                  icon="material-symbols:trending-up"
+                  className="w-3 h-3 text-green-400"
+                />
+              )}
+              <span className="font-tiktok text-xs text-main-text">
+                {buyLoading ? "Buying..." : `Buy ${quickBuyAmount} SOL`}
+              </span>
             </button>
 
             <button
               onClick={handleSellToken}
               disabled={sellLoading}
-              className="flex-1 relative bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] hover:border-red-400/50 rounded-lg py-1.5 transition-all duration-300 cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-black/60 hover:bg-black/80 border border-white/20 hover:border-red-400/50 rounded-sm transition-all duration-200 cursor-pointer"
             >
-              <div className="flex items-center justify-center gap-1 relative z-10">
-                {sellLoading ? (
-                  <Icon
-                    icon="eos-icons:loading"
-                    className="w-3.5 h-3.5 text-red-400 animate-spin"
-                  />
-                ) : (
-                  <Icon
-                    icon="material-symbols:trending-down"
-                    className="w-3.5 h-3.5 text-red-400 transition-colors duration-300"
-                  />
-                )}
-                <span className="font-tiktok text-xs text-main-text transition-colors duration-300">
-                  {sellLoading ? "Selling..." : `Sell ${quickSellPercentage}%`}
-                </span>
-              </div>
+              {sellLoading ? (
+                <Icon
+                  icon="eos-icons:loading"
+                  className="w-3 h-3 text-red-400 animate-spin"
+                />
+              ) : (
+                <Icon
+                  icon="material-symbols:trending-down"
+                  className="w-3 h-3 text-red-400"
+                />
+              )}
+              <span className="font-tiktok text-xs text-main-text">
+                {sellLoading ? "Selling..." : `Sell ${quickSellPercentage}%`}
+              </span>
             </button>
           </div>
-        </div>
 
-        {/* Desktop Layout (Original) */}
-        <div className="hidden lg:flex items-center justify-between h-full relative z-10">
-          <div className="flex items-center space-x-4 flex-1">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
-              <img
-                src={activity.avatar}
-                alt=""
-                className="w-full h-full rounded-full object-cover"
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
-                <Link
-                  to={`/accounts/${activity.walletAddress}`}
-                  className="font-tiktok text-sm font-medium text-main-text whitespace-nowrap cursor-pointer"
-                >
-                  {activity.name}
-                </Link>
-                <span className="font-tiktok text-sm text-main-light-text">
-                  {activity.action}
-                </span>
-                <span
-                  className={`font-tiktok text-sm cursor-pointer ${
-                    activity.type === "buy" ? "text-green-400" : "text-red-400"
-                  }`}
-                  onClick={handleTransactionClick}
-                  title="View transaction on Solscan"
-                >
-                  {activity.amount}
-                </span>
-                <span className="font-tiktok text-sm text-main-light-text">
-                  of
-                </span>
-                <span
-                  className="font-tiktok font-medium text-main-accent cursor-pointer"
-                  onClick={handleTokenClick}
-                >
-                  {activity.token}
-                </span>
-                <span className="font-tiktok text-sm text-main-light-text">
-                  at
-                </span>
-                <span className="font-tiktok text-sm font-medium text-main-highlight">
-                  {activity.price}
-                </span>
-                <span
-                  className={`font-tiktok text-sm ${
-                    activity.type === "buy" ? "text-green-400" : "text-red-400"
-                  }`}
-                >
-                  ({activity.solSpent})
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-            <div className="text-right mr-3">
-              <span className="font-tiktok text-sm text-main-light-text whitespace-nowrap">
-                {activity.timestamp}
-              </span>
-            </div>
-
-            {/* Buy and Sell Buttons */}
-            <div className="flex   gap-2">
-              <button
-                onClick={handleBuyToken}
-                disabled={buyLoading}
-                className="relative bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] hover:border-green-400/50 rounded-lg px-3 py-2 transition-all duration-300 cursor-pointer"
-              >
-                <div className="flex items-center gap-1 relative z-10">
-                  {buyLoading ? (
-                    <Icon
-                      icon="eos-icons:loading"
-                      className="w-4 h-4 text-green-400 animate-spin"
-                    />
-                  ) : (
-                    <Icon
-                      icon="material-symbols:trending-up"
-                      className="w-4 h-4 text-green-400 transition-colors duration-300"
-                    />
-                  )}
-                  <span className="font-tiktok text-xs text-main-text transition-colors duration-300">
-                    {buyLoading ? "Buying..." : `Buy ${quickBuyAmount} SOL`}
-                  </span>
-                </div>
-              </button>
-
-              <button
-                onClick={handleSellToken}
-                disabled={sellLoading}
-                className="relative bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] hover:border-red-400/50 rounded-lg px-3 py-2 transition-all duration-300 cursor-pointer"
-              >
-                <div className="flex items-center gap-1 relative z-10">
-                  {sellLoading ? (
-                    <Icon
-                      icon="eos-icons:loading"
-                      className="w-4 h-4 text-red-400 animate-spin"
-                    />
-                  ) : (
-                    <Icon
-                      icon="material-symbols:trending-down"
-                      className="w-4 h-4 text-red-400 transition-colors duration-300"
-                    />
-                  )}
-                  <span className="font-tiktok text-xs text-main-text transition-colors duration-300">
-                    {sellLoading
-                      ? "Selling..."
-                      : `Sell ${quickSellPercentage}%`}
-                  </span>
-                </div>
-              </button>
-            </div>
+          {/* Transaction Link */}
+          <div className="flex justify-end mt-2">
+            <button
+              onClick={handleTransactionClick}
+              className="text-main-light-text hover:text-main-accent transition-colors duration-200 p-1"
+              title="View transaction on Solscan"
+            >
+              <Icon icon="mdi:open-in-new" className="w-3 h-3" />
+            </button>
           </div>
         </div>
       </div>

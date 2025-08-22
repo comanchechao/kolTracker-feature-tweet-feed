@@ -243,7 +243,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ token }) => {
   };
 
   return (
-    <div className="group relative   bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-main-accent/50 rounded-3xl p-6 transition-all duration-500 hover:shadow-2xl hover:shadow-main-accent/10 before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-white/[0.05] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:-z-10">
+    <div className="group relative   bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-main-accent/50 rounded-sm p-6 transition-all duration-500 hover:shadow-2xl hover:shadow-main-accent/10 before:absolute before:inset-0 before:rounded-smbefore:bg-gradient-to-br before:from-white/[0.05] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:-z-10">
       {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-3 relative z-10">
         <div className="flex items-center gap-4">

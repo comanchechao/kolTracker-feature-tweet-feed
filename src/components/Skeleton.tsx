@@ -13,7 +13,7 @@ const Skeleton: React.FC<SkeletonProps> = ({ width, height, className }) => {
 
   return (
     <div
-      className={`bg-white/[0.08] animate-pulse rounded-md ${className || ""}`}
+      className={`bg-white/[0.08]   rounded-md ${className || ""}`}
       style={style}
     ></div>
   );

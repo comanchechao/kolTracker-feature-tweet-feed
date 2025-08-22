@@ -11,8 +11,8 @@
 
 @font-face {
   font-family: "Algance";
-  src: url("../fonts/algance-regular.otf") format("opentype");
-  font-weight: normal;
+  src: url("../fonts/algance-regular.ttf") format("opentype");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -45,7 +45,7 @@ body {
 
 @layer theme {
   :root {
-    --color-main-bg: #000610;
+    --color-main-bg: #090909;
     --color-light-bg: #1b212c;
     --color-main-accent: #00b4d8;
     --color-main-highlight: #e0fbfc;

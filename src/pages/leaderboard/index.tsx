@@ -68,7 +68,6 @@ const LeaderboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-main-bg py-8 px-4">
-      <Navbar />
       <div className="max-w-6xl mx-auto mb-20">
         {/* Back Button */}
         <div className="mb-6">
