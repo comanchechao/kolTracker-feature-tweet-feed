@@ -11,11 +11,8 @@ const Footer: React.FC = React.memo(() => {
           <div className="md:col-span-2">
             <div className="flex items-center mb-6">
               <div className="relative">
-                <span className="font-algance text-3xl   text-main-text">
-                  Cherry
-                </span>
                 <span className="font-algance text-3xl   text-main-accent ml-1">
-                  KOLs
+                  HYPE IGNITE
                 </span>
                 <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-[var(--color-main-accent)] to-[var(--color-main-highlight)] rounded-full"></div>
               </div>
@@ -203,7 +200,7 @@ const Footer: React.FC = React.memo(() => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-6 mb-4 md:mb-0">
               <p className="font-tiktok text-sm text-main-light-text">
-                © 2025 Cherry KOLs. All rights reserved.
+                © 2025 HYPE IGNITE. All rights reserved.
               </p>
               <div className="flex items-center space-x-2">
                 <Icon

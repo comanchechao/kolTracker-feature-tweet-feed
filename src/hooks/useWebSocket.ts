@@ -19,13 +19,11 @@ export const useWebSocket = <T>(
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
-  const baseReconnectDelay = 1000; // 1 second
+  const baseReconnectDelay = 1000;
 
-  // Use ref to store the callback to prevent unnecessary reconnections
   const onMessageRef = useRef(onMessage);
   onMessageRef.current = onMessage;
 
-  // Store options in ref to avoid dependency changes
   const optionsRef = useRef(options);
   optionsRef.current = options;
 
@@ -33,7 +31,6 @@ export const useWebSocket = <T>(
     (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
-        // console.log("WebSocket message received:", data);
         onMessageRef.current(data);
       } catch (error) {
         console.error("Error parsing WebSocket message:", error);
@@ -65,7 +62,6 @@ export const useWebSocket = <T>(
       setIsConnected(true);
       reconnectAttemptsRef.current = 0;
 
-      // Subscribe based on options
       if (optionsRef.current.subscribeCopyTrades) {
         socket.send(JSON.stringify({ event: "subscribe_copytrades" }));
       }

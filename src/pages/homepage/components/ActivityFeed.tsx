@@ -105,9 +105,9 @@ const ActivityFeed: React.FC<ActivityFeedProps> = React.memo(
     }, []);
 
     return (
-      <div className=" min-w-[320px]    w-full bg-white/[0.03] border border-white/[0.1] rounded-sm transition-all duration-500">
+      <div className="min-w-[320px] w-full bg-white/[0.03] border border-white/[0.1] rounded-sm transition-all duration-500 h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-black/60">
+        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-black/60 flex-shrink-0">
           <h2 className="font-algance text-lg text-main-text">
             Live KOL Activity
           </h2>
@@ -122,13 +122,13 @@ const ActivityFeed: React.FC<ActivityFeedProps> = React.memo(
         {/* Activity Cards Container */}
         <div
           ref={feedRef || localFeedRef}
-          className="space-y-2 p-2  w-full overflow-y-auto opacity-0"
+          className="space-y-2 p-2 w-full overflow-y-auto opacity-0 flex-1 min-h-0"
         >
           {activities.map(renderActivity)}
         </div>
 
         {/* Footer with View All Button */}
-        <div className="p-4 border-t border-white/10 bg-black/40">
+        <div className="p-4 border-t border-white/10 bg-black/40 flex-shrink-0">
           <Link
             to="/leaderboard"
             className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-main-accent/20 hover:bg-main-accent/30 border border-main-accent/50 hover:border-main-accent text-main-accent text-sm rounded-sm transition-all duration-300 cursor-pointer"

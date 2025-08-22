@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { Icon } from "@iconify/react";
 import gsap from "gsap";
-import Footer from "../../layouts/Footer";
 import ActivityFeed from "./components/ActivityFeed";
 import { KOLService } from "../../api";
 import { TradeData } from "../../types/api";
@@ -15,17 +14,14 @@ import { useWebSocket } from "../../hooks/useWebSocket";
 import { WebSocketMessage } from "../../types/websocket";
 import "../../css/index.css";
 import Skeleton from "../../components/Skeleton";
-import HomepageSearch from "../../components/HomepageSearch";
-import BottomStatusMenu from "../../components/BottomStatusMenu";
-
 import TrendingRibbon from "../../components/TrendingRibbon";
 import Tweet from "../tweets/components/Tweet";
 import LaunchTokenModal from "../tweets/components/LaunchTokenModal";
-import StatusMenu from "../tweets/components/StatusMenu";
 import TokensSection from "../tweets/components/TokensSection";
-import twitterWebSocketService, {
-  Tweet as TweetType,
-} from "../../services/twitterWebSocketService";
+import {
+  useTwitterWebSocket,
+  TwitterTweetData,
+} from "../../hooks/useTwitterWebSocket";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useIsMobile } from "../../hooks/useIsMobile";
 
@@ -68,13 +64,6 @@ const formatTime = (timestamp: string | number): string => {
   let timestampNum =
     typeof timestamp === "string" ? parseInt(timestamp, 10) : timestamp;
 
-  // console.log("🕐 Formatting timestamp:", {
-  //   original: timestamp,
-  //   parsed: timestampNum,
-  //   nowMillis: now.getTime(),
-  //   isLargeTimestamp: timestampNum > now.getTime() * 1000,
-  // });
-
   if (timestampNum > now.getTime() * 1000) {
     timestampNum = Math.floor(timestampNum / 1000);
     console.log("🔄 Converted timestamp from microseconds:", timestampNum);
@@ -103,14 +92,6 @@ const formatTime = (timestamp: string | number): string => {
   } else {
     formattedTime = `${Math.floor(diffInSeconds / 86400)}d ago`;
   }
-
-  // console.log("✅ Formatted timestamp:", {
-  //   original: timestamp,
-  //   converted: timestampNum,
-  //   tradeTime: tradeTime.toISOString(),
-  //   diffInSeconds,
-  //   formattedTime,
-  // });
 
   return formattedTime;
 };
@@ -150,83 +131,28 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const feedRef = useRef<HTMLDivElement>(null);
 
-  // Tweet functionality
-  const [tweets, setTweets] = useState<TweetType[]>([]);
-  const [isTweetConnected, setIsTweetConnected] = useState(false);
-  const [tweetStatusMessage, setTweetStatusMessage] = useState("");
-  const [isTweetInitialLoading, setIsTweetInitialLoading] = useState(true);
+  const [tweets, setTweets] = useState<TwitterTweetData[]>([]);
   const [isLaunchModalOpen, setIsLaunchModalOpen] = useState(false);
   const [showTweetTokens, setShowTweetTokens] = useState(false);
   const isTweetMobile = useIsMobile();
 
   const activitiesMapRef = useRef<Map<string, any>>(new Map());
 
-  // Tweet WebSocket functionality
-  useEffect(() => {
-    // Connect to the Twitter WebSocket service
-    const connectToTwitter = () => {
-      twitterWebSocketService.connect();
-    };
-
-    // Handle initial batch of tweets
-    const handleInitialTweets = (initialTweets: TweetType[]) => {
-      setTweets(initialTweets);
-      setIsTweetInitialLoading(false);
-    };
-
-    // Handle new tweets after initial batch
-    const handleNewTweet = (tweet: TweetType) => {
-      setTweets((prevTweets) => [tweet, ...prevTweets].slice(0, 50)); // Keep only the latest 50 tweets
-    };
-
-    // Handle connection status
-    const handleConnect = () => {
-      setIsTweetConnected(true);
-      setIsTweetInitialLoading(true);
-      setTweetStatusMessage("Connected to X stream");
-    };
-
-    // Handle disconnection
-    const handleDisconnect = () => {
-      setIsTweetConnected(false);
-      setIsTweetInitialLoading(false);
-      setTweetStatusMessage("Disconnected from X stream");
-    };
-
-    // Handle status messages
-    const handleStatus = (status: { type: string; message: string }) => {
-      setTweetStatusMessage(status.message);
-    };
-
-    // Register event listeners
-    twitterWebSocketService.on("initialTweets", handleInitialTweets);
-    twitterWebSocketService.on("tweet", handleNewTweet);
-    twitterWebSocketService.on("connect", handleConnect);
-    twitterWebSocketService.on("disconnect", handleDisconnect);
-    twitterWebSocketService.on("status", handleStatus);
-
-    // Connect to the service
-    connectToTwitter();
-
-    // Clean up event listeners on unmount
-    return () => {
-      twitterWebSocketService.off("initialTweets", handleInitialTweets);
-      twitterWebSocketService.off("tweet", handleNewTweet);
-      twitterWebSocketService.off("connect", handleConnect);
-      twitterWebSocketService.off("disconnect", handleDisconnect);
-      twitterWebSocketService.off("status", handleStatus);
-      twitterWebSocketService.disconnect();
-    };
-  }, []);
-
-  // Toggle tweet connection
-  const toggleTweetConnection = () => {
-    if (isTweetConnected) {
-      twitterWebSocketService.disconnect();
-    } else {
-      twitterWebSocketService.connect();
-    }
-  };
+  // Use the new Twitter WebSocket hook
+  const { isConnected: isTweetConnected, isConnecting: isTweetInitialLoading } =
+    useTwitterWebSocket(
+      (tweet: TwitterTweetData) => {
+        setTweets((prevTweets) => [tweet, ...prevTweets].slice(0, 50)); // Keep only the latest 50 tweets
+      },
+      () => {
+        // onConnect callback
+        console.log("Twitter WebSocket connected");
+      },
+      () => {
+        // onDisconnect callback
+        console.log("Twitter WebSocket disconnected");
+      }
+    );
 
   const convertTradeToActivity = useCallback((trade: TradeData) => {
     if (!trade.transactionHash) {
@@ -238,16 +164,6 @@ const HomePage: React.FC = () => {
       });
       return null;
     }
-
-    // console.log("🔄 Converting trade to activity:", {
-    //   username: trade.username,
-    //   tradeType: trade.tradeType,
-    //   tokenSymbol: trade.tokenSymbol,
-    //   timestamp: trade.timestamp,
-    //   transactionHash: trade.transactionHash,
-    //   originalTimestamp: trade.timestamp,
-    //   formattedTimestamp: formatTime(trade.timestamp),
-    // });
 
     const activity = {
       id: trade.transactionHash,
@@ -447,7 +363,7 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-main-bg relative overflow-hidden">
+      <div className="h-full w-screen main-grid-bg flex-1 min-h-0   p-4 bg-main-bg relative  ">
         {/* Simple background decoration */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-light-bg opacity-10 rounded-full"></div>
@@ -457,7 +373,7 @@ const HomePage: React.FC = () => {
 
         {/* Mobile View Toggle - Floating Button */}
         {isTweetMobile && (
-          <div className="fixed bottom-24 right-4 z-50">
+          <div className="fixed bottom-20 right-4 z-50">
             <div className="relative">
               {/* Toggle Button */}
               <button
@@ -483,25 +399,18 @@ const HomePage: React.FC = () => {
         )}
 
         {/* Live Feed Section with Sidebar Layout */}
-        <div className="relative z-10 pb-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-2">
-              <div className="relative w-full mb-4 mx-auto">
-                {/* Optimized search component that won't re-render when activities change */}
-                <HomepageSearch className="w-full" />
-              </div>
-            </div>
-
+        <div className="relative z-10 h-full flex flex-col pt-2">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col">
             {/* Main Content and Activity Feed Sidebar */}
-            <div className="flex gap-6">
+            <div className="flex gap-6   pb-8">
               {/* Main Content Area */}
               <div
-                className={`flex-1 ${
+                className={`flex-1 flex flex-col ${
                   isTweetMobile && showTweetTokens ? "hidden" : ""
                 }`}
               >
                 {loading ? (
-                  <div className="space-y-4 h-full overflow-y-auto no-scrollbar">
+                  <div className="space-y-4 h-full overflow-y-auto    ">
                     {[...Array(5)].map((_, i) => (
                       <div
                         key={i}
@@ -516,18 +425,20 @@ const HomePage: React.FC = () => {
                     ))}
                   </div>
                 ) : error ? (
-                  <div className="text-center py-12">
-                    <p className="text-red-400 font-tiktok mb-4">{error}</p>
-                    <button
-                      onClick={fetchRecentTrades}
-                      className="px-6 py-2 bg-main-accent hover:bg-main-highlight text-main-bg font-tiktok rounded-xl transition-all duration-300"
-                    >
-                      Retry
-                    </button>
+                  <div className="text-center py-12   flex items-center justify-center">
+                    <div>
+                      <p className="text-red-400 font-tiktok mb-4">{error}</p>
+                      <button
+                        onClick={fetchRecentTrades}
+                        className="px-6 py-2 bg-main-accent hover:bg-main-highlight text-main-bg font-tiktok rounded-xl transition-all duration-300"
+                      >
+                        Retry
+                      </button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="bg-white/[0.03] border border-white/[0.1] rounded-sm p-6">
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="bg-white/[0.03] border border-white/[0.1] rounded-sm p-6   flex flex-col h-full">
+                    <div className="flex items-center justify-between mb-4 flex-shrink-0">
                       <div className="flex items-center space-x-2">
                         <div
                           className={`w-2 h-2 rounded-full ${
@@ -540,8 +451,8 @@ const HomePage: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Tweet Content */}
-                    <div className="space-y-4">
+                    {/* Tweet Content - Scrollable */}
+                    <div className="space-y-4  h-full overflow-y-auto no-scrollbar">
                       {tweets.length === 0 ? (
                         <div className="text-center py-8">
                           <div className="mb-4">
@@ -564,7 +475,7 @@ const HomePage: React.FC = () => {
                         </div>
                       ) : (
                         tweets.map((tweet) => (
-                          <Tweet key={tweet.id_str} tweet={tweet} />
+                          <Tweet key={tweet.tweetId} tweet={tweet} />
                         ))
                       )}
                     </div>
@@ -574,8 +485,8 @@ const HomePage: React.FC = () => {
 
               {/* Tokens Section - Show on mobile when toggled */}
               {isTweetMobile && showTweetTokens && (
-                <div className="flex-1">
-                  <div className="tokens-container">
+                <div className="flex-1 flex flex-col min-h-0">
+                  <div className="tokens-container flex-1 overflow-y-auto no-scrollbar">
                     <TokensSection />
                   </div>
                 </div>
@@ -583,7 +494,7 @@ const HomePage: React.FC = () => {
 
               {/* Activity Feed Sidebar */}
               <div
-                className={`hidden lg:block ${
+                className={`hidden lg:block flex-shrink-0 ${
                   isTweetMobile && showTweetTokens ? "hidden" : ""
                 }`}
               >
@@ -597,78 +508,6 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Features Section */}
-        <div className="relative z-10 pb-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="font-algance text-4xl md:text-5xl text-main-text mb-4">
-                Why Track KOLs?
-              </h2>
-              <p className="font-tiktok text-lg text-main-light-text max-w-2xl mx-auto">
-                Stay ahead of the market by following the moves of crypto's most
-                influential traders and thought leaders.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-main-accent/30 rounded-2xl p-8 text-center transition-all duration-300">
-                <div className="w-16 h-16 bg-gradient-to-br from-[var(--color-main-accent)] to-[var(--color-main-highlight)] rounded-2xl flex items-center justify-center mx-auto mb-6 relative z-10">
-                  <Icon
-                    icon="material-symbols:trending-up"
-                    className="w-8 h-8 text-main-bg"
-                  />
-                </div>
-                <h3 className="font-algance text-2xl text-main-text mb-4 relative z-10">
-                  Real-time Insights
-                </h3>
-                <p className="font-tiktok text-main-light-text relative z-10">
-                  Get instant notifications when top KOLs make significant moves
-                  in the market.
-                </p>
-              </div>
-              <div className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-main-accent/30 rounded-2xl p-8 text-center transition-all duration-300">
-                <div className="w-16 h-16 bg-gradient-to-br from-[var(--color-main-accent)] to-[var(--color-main-highlight)] rounded-2xl flex items-center justify-center mx-auto mb-6 relative z-10">
-                  <Icon
-                    icon="material-symbols:analytics"
-                    className="w-8 h-8 text-main-bg"
-                  />
-                </div>
-                <h3 className="font-algance text-2xl text-main-text mb-4 relative z-10">
-                  Advanced Analytics
-                </h3>
-                <p className="font-tiktok text-main-light-text relative z-10">
-                  Analyze trading patterns, success rates, and portfolio
-                  performance of top influencers.
-                </p>
-              </div>
-              <div className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.1] hover:border-main-accent/30 rounded-2xl p-8 text-center transition-all duration-300">
-                <div className="w-16 h-16 bg-gradient-to-br from-[var(--color-main-accent)] to-[var(--color-main-highlight)] rounded-2xl flex items-center justify-center mx-auto mb-6 relative z-10">
-                  <Icon
-                    icon="material-symbols:social-leaderboard"
-                    className="w-8 h-8 text-main-bg"
-                  />
-                </div>
-                <h3 className="font-algance text-2xl text-main-text mb-4 relative z-10">
-                  Performance Rankings
-                </h3>
-                <p className="font-tiktok text-main-light-text relative z-10">
-                  See who's performing best with our comprehensive leaderboard
-                  system.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Status Menu for Tweet Connection */}
-        <StatusMenu
-          isConnected={isTweetConnected}
-          statusMessage={tweetStatusMessage}
-          onToggleConnection={toggleTweetConnection}
-        />
-
-        <BottomStatusMenu />
-        <Footer />
       </div>
 
       {/* Launch Token Modal */}

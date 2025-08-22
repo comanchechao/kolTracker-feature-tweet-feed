@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import twitterWebSocketService, {
-  Tweet as TweetType,
-} from "../../services/twitterWebSocketService";
+import React, { useState } from "react";
+import {
+  useTwitterWebSocket,
+  TwitterTweetData,
+} from "../../hooks/useTwitterWebSocket";
 import Navbar from "./components/Navbar";
 import "../../css/twitter.css";
 import StatusMenu from "./components/StatusMenu";
@@ -14,79 +15,34 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import { Icon } from "@iconify/react";
 
 const TweetFeed: React.FC = () => {
-  const [tweets, setTweets] = useState<TweetType[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [tweets, setTweets] = useState<TwitterTweetData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showTokens, setShowTokens] = useState(false); // Mobile view toggle
   const isMobile = useIsMobile();
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  useEffect(() => {
-    // Connect to the Twitter WebSocket service
-    const connectToTwitter = () => {
-      twitterWebSocketService.connect();
-    };
 
-    // Handle initial batch of tweets
-    const handleInitialTweets = (initialTweets: TweetType[]) => {
-      setTweets(initialTweets);
-      setIsInitialLoading(false);
-    };
+  const {
+    isConnected,
+    isConnecting: isInitialLoading,
+    connect,
+    disconnect,
+  } = useTwitterWebSocket(
+    (tweet: TwitterTweetData) => {
+      setTweets((prevTweets) => [tweet, ...prevTweets].slice(0, 50));
+    },
+    () => {
+      console.log("Twitter WebSocket connected");
+    },
+    () => {
+      console.log("Twitter WebSocket disconnected");
+    }
+  );
 
-    // Handle new tweets after initial batch
-    const handleNewTweet = (tweet: TweetType) => {
-      setTweets((prevTweets) => [tweet, ...prevTweets].slice(0, 50)); // Keep only the latest 50 tweets
-    };
-
-    // Handle connection status
-    const handleConnect = () => {
-      setIsConnected(true);
-      setIsInitialLoading(true);
-      setStatusMessage("Connected to X stream");
-    };
-
-    // Handle disconnection
-    const handleDisconnect = () => {
-      setIsConnected(false);
-      setIsInitialLoading(false);
-      setStatusMessage("Disconnected from X stream");
-    };
-
-    // Handle status messages
-    const handleStatus = (status: { type: string; message: string }) => {
-      setStatusMessage(status.message);
-    };
-
-    // Register event listeners
-    twitterWebSocketService.on("initialTweets", handleInitialTweets);
-    twitterWebSocketService.on("tweet", handleNewTweet);
-    twitterWebSocketService.on("connect", handleConnect);
-    twitterWebSocketService.on("disconnect", handleDisconnect);
-    twitterWebSocketService.on("status", handleStatus);
-
-    // Connect to the service
-    connectToTwitter();
-
-    // Clean up event listeners on unmount
-    return () => {
-      twitterWebSocketService.off("initialTweets", handleInitialTweets);
-      twitterWebSocketService.off("tweet", handleNewTweet);
-      twitterWebSocketService.off("connect", handleConnect);
-      twitterWebSocketService.off("disconnect", handleDisconnect);
-      twitterWebSocketService.off("status", handleStatus);
-      twitterWebSocketService.disconnect();
-    };
-  }, []);
-
-  // We've removed the like, retweet, and reply handlers as they're no longer needed
-
-  // Toggle connection
   const toggleConnection = () => {
     if (isConnected) {
-      twitterWebSocketService.disconnect();
+      disconnect();
     } else {
-      twitterWebSocketService.connect();
+      connect();
     }
   };
 
@@ -156,7 +112,7 @@ const TweetFeed: React.FC = () => {
                   ) : (
                     <div className="space-y-4 p-7  ">
                       {tweets.map((tweet) => (
-                        <Tweet key={tweet.id_str} tweet={tweet} />
+                        <Tweet key={tweet.tweetId} tweet={tweet} />
                       ))}
                     </div>
                   )}
@@ -176,9 +132,8 @@ const TweetFeed: React.FC = () => {
         </div>
       </div>
       <StatusMenu
-        isConnected={isConnected}
-        statusMessage={statusMessage}
-        onToggleConnection={toggleConnection}
+        isTweetConnected={isConnected}
+        onToggleTweetConnection={toggleConnection}
       />
 
       {/* Launch Token Modal */}

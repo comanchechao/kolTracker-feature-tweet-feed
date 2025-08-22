@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "./Navbar";
-
-const PageLayout = ({ children }: { children: React.ReactNode }) => {
+import BottomStatusMenu from "../components/BottomStatusMenu";
+export interface PageLayoutProps {
+  children: React.ReactNode;
+}
+const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   return (
@@ -19,6 +22,7 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
       >
         {children}
       </motion.div>
+      <BottomStatusMenu />
     </>
   );
 };

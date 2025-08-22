@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import { createPortal } from "react-dom";
 import "../../../css/twitter.css";
 import { motion } from "framer-motion";
-import { Tweet as TweetMock } from "../../../services/twitterWebSocketService";
+import { TwitterTweetData } from "../../../hooks/useTwitterWebSocket";
 import ImageModal from "../../../components/ImageModal";
 import LaunchTokenModal from "../../tweets/components/LaunchTokenModal";
 import { useIsMobile } from "../../../hooks/useIsMobile";
@@ -36,14 +36,12 @@ const convertToAbbreviation = (text: string): string => {
 };
 
 interface TweetProps {
-  tweet: TweetMock;
+  tweet: TwitterTweetData;
 }
 
 const Tweet: React.FC<TweetProps> = ({ tweet }) => {
-  // Get the full text from extended_tweet if available, otherwise use the regular text
-  const tweetText = tweet.extended_tweet
-    ? tweet.extended_tweet.full_text
-    : tweet.text;
+  // Use the text directly from the new structure
+  const tweetText = tweet.text;
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
@@ -97,7 +95,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
   const { showError } = useToastContext();
 
   // Get the tweet URL for the LaunchTokenModal
-  const tweetUrl = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`;
+  const tweetUrl = `https://twitter.com/${tweet.username}/status/${tweet.tweetId}`;
 
   // Format the tweet time to show how long ago it was posted
   const formatTimeAgo = (dateString: string) => {
@@ -254,55 +252,9 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
   }, []);
 
   const renderTweetText = (text: string) => {
-    let processedText = text;
-
-    if (
-      tweet.entities &&
-      tweet.entities.urls &&
-      tweet.entities.urls.length > 0
-    ) {
-      tweet.entities.urls.forEach((urlEntity) => {
-        processedText = processedText.replace(
-          urlEntity.url,
-          `<a href="${urlEntity.expanded_url}" target="_blank" rel="noopener noreferrer">${urlEntity.display_url}</a>`
-        );
-      });
-    }
-
-    if (
-      tweet.entities &&
-      tweet.entities.user_mentions &&
-      tweet.entities.user_mentions.length > 0
-    ) {
-      tweet.entities.user_mentions.forEach((mention) => {
-        const mentionText = `@${mention.screen_name}`;
-        processedText = processedText.replace(
-          mentionText,
-          `<a href="https://twitter.com/${mention.screen_name}" target="_blank" rel="noopener noreferrer">${mentionText}</a>`
-        );
-      });
-    }
-
-    if (
-      tweet.entities &&
-      tweet.entities.hashtags &&
-      tweet.entities.hashtags.length > 0
-    ) {
-      tweet.entities.hashtags.forEach((hashtag) => {
-        const hashtagText = `#${hashtag.text}`;
-        processedText = processedText.replace(
-          hashtagText,
-          `<a href="https://twitter.com/hashtag/${hashtag.text}" target="_blank" rel="noopener noreferrer">${hashtagText}</a>`
-        );
-      });
-    }
-
-    return (
-      <div
-        dangerouslySetInnerHTML={{ __html: processedText }}
-        style={{ userSelect: "text" }}
-      />
-    );
+    // For now, just return the text as is since the new structure doesn't have entities
+    // You can add URL detection and other processing here if needed
+    return <div style={{ userSelect: "text" }}>{text}</div>;
   };
 
   return (
@@ -321,8 +273,8 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
           <div className="flex flex-row">
             <div className="relative">
               <img
-                src={tweet.user.profile_image_url_https}
-                alt={`${tweet.user.name}'s avatar`}
+                src={tweet.profileImage}
+                alt={`${tweet.displayName}'s avatar`}
                 className="tweet-avatar rounded-sm border border-white/20 shadow-lg"
               />
             </div>
@@ -330,8 +282,8 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
             <div className="flex items-center mb-3 ml-4 w-full justify-between">
               <div className="flex flex-col">
                 <div className="flex flex-row items-center font-tiktok font-bold text-main-text">
-                  <span className="text-lg">{tweet.user.name}</span>
-                  {tweet.user.verified && (
+                  <span className="text-lg">{tweet.displayName}</span>
+                  {tweet.verified && (
                     <div className="ml-2 mt-1">
                       <Icon
                         icon="mdi:check-decagram"
@@ -341,7 +293,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                   )}
                 </div>
                 <div className="text-main-light-text font-tiktok text-sm">
-                  @{tweet.user.screen_name}
+                  @{tweet.username}
                 </div>
               </div>
               <div className="">
@@ -369,27 +321,21 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
           </div>
 
           {/* Tweet Media (if any) */}
-          {tweet.entities.media && tweet.entities.media.length > 0 && (
+          {tweet.mediaUrl && (
             <div
               className="mt-3 mb-4 rounded-sm overflow-hidden items-center justify-center tweet-media relative group cursor-pointer border border-white/10"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (tweet.entities.media) {
-                  setCurrentImageUrl(tweet.entities.media[0].media_url_https);
-                  setIsImageModalOpen(true);
-                }
+                setCurrentImageUrl(tweet.mediaUrl!);
+                setIsImageModalOpen(true);
               }}
             >
-              {/* Only load image when tweet is visible */}
-              {isVisible && (
-                <OptimizedImage
-                  src={tweet.entities.media[0].media_url_https}
-                  alt="Tweet media"
-                  className="h-full max-h-72 object-cover rounded-sm border border-white/10 transition-transform duration-200  "
-                  priority={true}
-                />
-              )}
+              <img
+                src={tweet.mediaUrl}
+                alt="Tweet media"
+                className="h-full max-h-72 object-cover rounded-sm border border-white/10 transition-transform duration-200 w-full"
+              />
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Icon
@@ -401,87 +347,81 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
             </div>
           )}
 
-          {/* Quoted Tweet (if any) */}
-          {tweet.is_quote_status && tweet.quoted_status && (
-            <div className="mt-3 mb-4 border border-white/10 rounded-sm p-4 hover:bg-white/5 transition-all duration-200 bg-black/20">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 mr-3">
-                  <img
-                    src={tweet.quoted_status.user.profile_image_url_https}
-                    alt={`${tweet.quoted_status.user.name}'s avatar`}
-                    className="w-10 h-10 rounded-sm border border-white/20"
-                  />
+          {/* <div className="mt-3 mb-4 border border-white/10 rounded-sm p-4 hover:bg-white/5 transition-all duration-200 bg-black/20">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 mr-3">
+                <img
+                  src={tweet.quoted_status.user.profile_image_url_https}
+                  alt={`${tweet.quoted_status.user.name}'s avatar`}
+                  className="w-10 h-10 rounded-sm border border-white/20"
+                />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center mb-2">
+                  <div className="font-tiktok font-bold text-main-text text-sm">
+                    {tweet.quoted_status.user.name}
+                  </div>
+                  <div className="ml-2 text-main-light-text text-xs font-tiktok hidden md:inline">
+                    @{tweet.quoted_status.user.screen_name}
+                  </div>
+                  {tweet.quoted_status.user.verified && (
+                    <div className="ml-2 verified-badge bg-main-accent/20">
+                      <Icon
+                        icon="mdi:check-decagram"
+                        className="w-4 h-4 text-main-accent"
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center mb-2">
-                    <div className="font-tiktok font-bold text-main-text text-sm">
-                      {tweet.quoted_status.user.name}
-                    </div>
-                    <div className="ml-2 text-main-light-text text-xs font-tiktok hidden md:inline">
-                      @{tweet.quoted_status.user.screen_name}
-                    </div>
-                    {tweet.quoted_status.user.verified && (
-                      <div className="ml-2 verified-badge bg-main-accent/20">
-                        <Icon
-                          icon="mdi:check-decagram"
-                          className="w-4 h-4 text-main-accent"
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-main-text text-sm tweet-text font-tiktok">
-                    {renderTweetText(
-                      tweet.quoted_status.extended_tweet
-                        ? tweet.quoted_status.extended_tweet.full_text
-                        : tweet.quoted_status.text
-                    )}
-                  </div>
-                  {tweet.quoted_status.entities.media &&
-                    tweet.quoted_status.entities.media.length > 0 && (
-                      <div
-                        className="mt-3 rounded-sm overflow-hidden tweet-media relative group cursor-pointer border border-white/10"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (tweet.quoted_status?.entities.media) {
-                            setCurrentImageUrl(
-                              tweet.quoted_status.entities.media[0]
-                                .media_url_https
-                            );
-                            setIsImageModalOpen(true);
+                <div className="text-main-text text-sm tweet-text font-tiktok">
+                  {renderTweetText(
+                    tweet.quoted_status.extended_tweet
+                      ? tweet.quoted_status.extended_tweet.full_text
+                      : tweet.quoted_status.text
+                  )}
+                </div>
+                {tweet.quoted_status.entities.media &&
+                  tweet.quoted_status.entities.media.length > 0 && (
+                    <div
+                      className="mt-3 rounded-sm overflow-hidden tweet-media relative group cursor-pointer border border-white/10"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (tweet.quoted_status?.entities.media) {
+                          setCurrentImageUrl(
+                            tweet.quoted_status.entities.media[0]
+                              .media_url_https
+                          );
+                          setIsImageModalOpen(true);
+                        }
+                      }}
+                    >
+                      {isVisible && (
+                        <OptimizedImage
+                          src={
+                            tweet.quoted_status.entities.media[0]
+                              .media_url_https
                           }
-                        }}
-                      >
-                        {/* Only load image when tweet is visible */}
-                        {isVisible && (
-                          <OptimizedImage
-                            src={
-                              tweet.quoted_status.entities.media[0]
-                                .media_url_https
-                            }
-                            alt="Quoted tweet media"
-                            className="h-full max-h-36 object-cover rounded-sm transition-transform duration-200  "
-                            priority={true}
+                          alt="Quoted tweet media"
+                          className="h-full max-h-36 object-cover rounded-sm transition-transform duration-200  "
+                          priority={true}
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <Icon
+                            icon="mdi:fullscreen"
+                            className="w-8 h-8 text-white drop-shadow-lg"
                           />
-                        )}
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            <Icon
-                              icon="mdi:fullscreen"
-                              className="w-8 h-8 text-white drop-shadow-lg"
-                            />
-                          </div>
                         </div>
                       </div>
-                    )}
-                </div>
+                    </div>
+                  )}
               </div>
             </div>
-          )}
+          </div> */}
 
-          {/* Replied To Tweet (if any) */}
-          {tweet.in_reply_to_status_id && tweet.replied_to_tweet && (
-            <div className="mb-4 pt-3 border-t border-white/10">
+          {/* <div className="mb-4 pt-3 border-t border-white/10">
               <div className="text-main-light-text text-xs mb-3 font-tiktok">
                 <Icon icon="mdi:reply" className="w-4 h-4 inline-block mr-2" />
                 Replying to{" "}
@@ -518,8 +458,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                 </div>
               </div>
             </div>
-          )}
-
+       */}
           {/* Tweet Stats (Read Only) with Date/Time */}
           <div className="flex text-main-light-text text-sm space-x-6 pt-4 border-t border-white/10">
             <div className="flex items-center hover:text-main-accent transition-colors duration-200 group">
@@ -535,7 +474,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                 icon="mdi:repeat"
                 className="w-5 h-5 mr-2    transition-transform duration-200"
               />
-              <span>{tweet.retweet_count}</span>
+              <span>{tweet.engagement.retweets}</span>
             </div>
 
             <div className="flex items-center hover:text-main-accent transition-colors duration-200 group">
@@ -543,12 +482,12 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                 icon="mdi:heart-outline"
                 className="w-5 h-5 mr-2    transition-transform duration-200"
               />
-              <span>{tweet.favorite_count}</span>
+              <span>{tweet.engagement.favorites}</span>
             </div>
 
             <div className="flex items-center ml-auto text-main-accent">
               <div className="text-main-light-text text-sm font-tiktok mr-3">
-                {formatTimeAgo(tweet.created_at)}
+                {formatTimeAgo(tweet.createdAt)}
               </div>
               <a
                 href={tweetUrl}
@@ -628,21 +567,8 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
         initialTokenName={modalInitialValues.tokenName}
         initialTokenSymbol={modalInitialValues.tokenSymbol}
         images={[
-          ...(tweet?.entities?.media?.[0]?.media_url_https
-            ? [tweet.entities.media[0].media_url_https]
-            : []),
-          ...(tweet.user.profile_image_url_https && [
-            tweet.user.profile_image_url_https,
-          ]),
-          ...(tweet?.quoted_status?.entities?.media?.[0]?.media_url_https
-            ? [tweet?.quoted_status?.entities?.media[0]?.media_url_https]
-            : []),
-          ...(tweet?.quoted_status?.user?.profile_image_url_https
-            ? [tweet?.quoted_status?.user?.profile_image_url_https]
-            : []),
-          ...(tweet?.replied_to_tweet?.user?.profile_image_url_https
-            ? [tweet?.replied_to_tweet?.user?.profile_image_url_https]
-            : []),
+          ...(tweet.mediaUrl ? [tweet.mediaUrl] : []),
+          ...(tweet.profileImage ? [tweet.profileImage] : []),
         ]}
       />
     </motion.div>
