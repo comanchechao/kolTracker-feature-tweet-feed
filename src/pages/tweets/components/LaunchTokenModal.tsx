@@ -94,8 +94,6 @@ const LaunchTokenModal: React.FC<LaunchTokenModalProps> = ({
     setSelectedTokenType(id);
   };
 
-
-
   // Handle click outside to close modal
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {

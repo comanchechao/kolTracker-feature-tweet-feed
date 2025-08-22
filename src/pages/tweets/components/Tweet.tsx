@@ -45,7 +45,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     ? tweet.extended_tweet.full_text
     : tweet.text;
 
-  // State for image modal and launch token modal
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
   const [showLaunchTokenModal, setShowLaunchTokenModal] = useState(false);
@@ -53,7 +52,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     tokenName: "",
     tokenSymbol: "",
   });
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const tweetRef = useRef<HTMLDivElement>(null);
 
@@ -144,8 +142,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     }
   };
 
-
-
   // Handle context menu option selection
   const handleContextMenuOption = (option: string) => {
     console.log(`Selected option: ${option} for text: "${selectedText}"`);
@@ -155,7 +151,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
 
     switch (option) {
       case "Auto":
-        // Open LaunchTokenModal with selected text as Name and abbreviation as Symbol
         setModalInitialValues({
           tokenName: selectedText,
           tokenSymbol: abbreviation,
@@ -186,24 +181,14 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     window.getSelection()?.removeAllRanges();
   };
 
-  // Handle selection changes and close context menu when clicking elsewhere
   useEffect(() => {
     let selectionTimer: NodeJS.Timeout;
     let mouseUpTimer: NodeJS.Timeout;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      // Only hide context menu if clicking outside the context menu itself
-      const target = e.target as Element;
-      if (target && !target.closest(".context-menu")) {
-        setShowContextMenu(false);
-      }
-    };
 
     const showContextMenuForSelection = () => {
       const selection = window.getSelection();
       if (selection && selection.toString().trim().length >= 2) {
         const selectedText = selection.toString().trim();
-        // Only show context menu if text length is between 2 and 100 characters
         if (selectedText.length >= 2 && selectedText.length <= 100) {
           const tweetElement = tweetRef.current;
           if (
@@ -212,7 +197,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
             tweetElement.contains(selection.anchorNode)
           ) {
             setSelectedText(selectedText);
-            // Update final position based on selection bounds
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
             setContextMenuPosition({ x: rect.right + 10, y: rect.bottom + 5 });
@@ -220,8 +204,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
           }
         }
       } else if (selection && selection.toString().trim().length === 0) {
-        // Only hide menu if selection is completely empty and we're not in the middle of selecting
-        // Add a small delay to prevent flickering during selection
         setTimeout(() => {
           const currentSelection = window.getSelection();
           if (
@@ -235,19 +217,16 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     };
 
     const handleSelectionChange = () => {
-      // Debounce selection changes to improve performance
       clearTimeout(selectionTimer);
       selectionTimer = setTimeout(showContextMenuForSelection, 100);
     };
 
     const handleGlobalMouseUp = () => {
-      // Debounce mouse up events to improve performance
       clearTimeout(mouseUpTimer);
       mouseUpTimer = setTimeout(showContextMenuForSelection, 50);
     };
 
     const handleGlobalMouseDown = (e: MouseEvent) => {
-      // Only hide context menu if clicking outside the context menu and outside the tweet
       const target = e.target as Element;
       const tweetElement = tweetRef.current;
 
@@ -274,12 +253,9 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     };
   }, []);
 
-  // Process tweet text to render links, mentions, and hashtags
   const renderTweetText = (text: string) => {
-    // Replace URLs with clickable links
     let processedText = text;
 
-    // Process URLs if they exist
     if (
       tweet.entities &&
       tweet.entities.urls &&
@@ -293,7 +269,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       });
     }
 
-    // Process mentions if they exist
     if (
       tweet.entities &&
       tweet.entities.user_mentions &&
@@ -308,7 +283,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       });
     }
 
-    // Process hashtags if they exist
     if (
       tweet.entities &&
       tweet.entities.hashtags &&
@@ -414,7 +388,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                   alt="Tweet media"
                   className="h-full max-h-72 object-cover rounded-sm border border-white/10 transition-transform duration-200  "
                   priority={true}
-                  onLoad={() => setImagesLoaded(true)}
                 />
               )}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
@@ -489,7 +462,6 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
                             alt="Quoted tweet media"
                             className="h-full max-h-36 object-cover rounded-sm transition-transform duration-200  "
                             priority={true}
-                            onLoad={() => setImagesLoaded(true)}
                           />
                         )}
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
@@ -656,11 +628,21 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
         initialTokenName={modalInitialValues.tokenName}
         initialTokenSymbol={modalInitialValues.tokenSymbol}
         images={[
-          ...(tweet?.entities?.media?.[0]?.media_url_https ? [tweet.entities.media[0].media_url_https] : []),
-          ...(tweet.user.profile_image_url_https && [tweet.user.profile_image_url_https]),  
-          ...(tweet?.quoted_status?.entities?.media?.[0]?.media_url_https ? [tweet?.quoted_status?.entities?.media[0]?.media_url_https] : []),
-          ...(tweet?.quoted_status?.user?.profile_image_url_https ? [tweet?.quoted_status?.user?.profile_image_url_https] : []),
-          ...(tweet?.replied_to_tweet?.user?.profile_image_url_https ? [tweet?.replied_to_tweet?.user?.profile_image_url_https] : []),
+          ...(tweet?.entities?.media?.[0]?.media_url_https
+            ? [tweet.entities.media[0].media_url_https]
+            : []),
+          ...(tweet.user.profile_image_url_https && [
+            tweet.user.profile_image_url_https,
+          ]),
+          ...(tweet?.quoted_status?.entities?.media?.[0]?.media_url_https
+            ? [tweet?.quoted_status?.entities?.media[0]?.media_url_https]
+            : []),
+          ...(tweet?.quoted_status?.user?.profile_image_url_https
+            ? [tweet?.quoted_status?.user?.profile_image_url_https]
+            : []),
+          ...(tweet?.replied_to_tweet?.user?.profile_image_url_https
+            ? [tweet?.replied_to_tweet?.user?.profile_image_url_https]
+            : []),
         ]}
       />
     </motion.div>
