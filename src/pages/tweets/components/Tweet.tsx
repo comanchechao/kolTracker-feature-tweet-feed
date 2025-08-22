@@ -7,7 +7,6 @@ import { TwitterTweetData } from "../../../hooks/useTwitterWebSocket";
 import ImageModal from "../../../components/ImageModal";
 import LaunchTokenModal from "../../tweets/components/LaunchTokenModal";
 import { useIsMobile } from "../../../hooks/useIsMobile";
-import OptimizedImage from "./OptimizedImage";
 import { useToastContext } from "../../../contexts/ToastContext";
 
 // Function to convert strings to initials or abbreviated forms
