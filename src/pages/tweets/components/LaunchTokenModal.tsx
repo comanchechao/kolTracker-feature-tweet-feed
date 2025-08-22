@@ -43,9 +43,7 @@ const LaunchTokenModal: React.FC<LaunchTokenModalProps> = ({
 
   // SOL options
   const solOptions = [1, 3, 5];
-  const [selectedSolOption, setSelectedSolOption] = useState<number | null>(
-    null
-  );
+
   const [splitRatio, setSplitRatio] = useState("0:100");
   const [solAmount, setSolAmount] = useState(3);
 
