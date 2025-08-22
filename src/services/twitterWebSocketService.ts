@@ -235,14 +235,7 @@ const urls = [
   "https://developer.x.com/products/new-feature",
 ];
 
-// Sample image URLs to randomly insert into tweets
-const imageUrls = [
-  "https://picsum.photos/800/450", // Landscape format
-  "https://picsum.photos/600/800", // Portrait format
-  "https://picsum.photos/700/700", // Square format
-  "https://picsum.photos/900/500", // Wide landscape
-  "https://picsum.photos/500/900", // Tall portrait
-];
+
 
 // Dates to randomly insert into templates
 const dates = [

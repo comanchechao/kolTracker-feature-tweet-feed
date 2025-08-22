@@ -17,6 +17,7 @@ const ProfilePage: React.FC = () => {
   const [isResumingAll, setIsResumingAll] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [copyTradeModalOpen, setCopyTradeModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCopyTradeOrders = async () => {
@@ -136,7 +137,10 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-main-bg relative overflow-hidden">
-      <Navbar />
+      <Navbar
+        isSettingsModalOpen={isSettingsModalOpen}
+        setIsSettingsModalOpen={setIsSettingsModalOpen}
+      />
       {/* Texture Overlay */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"

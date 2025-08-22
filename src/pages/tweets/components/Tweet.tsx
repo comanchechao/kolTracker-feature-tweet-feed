@@ -144,10 +144,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
     }
   };
 
-  // Handle link clicks
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.stopPropagation();
-  };
+
 
   // Handle context menu option selection
   const handleContextMenuOption = (option: string) => {
@@ -243,7 +240,7 @@ const Tweet: React.FC<TweetProps> = ({ tweet }) => {
       selectionTimer = setTimeout(showContextMenuForSelection, 100);
     };
 
-    const handleGlobalMouseUp = (e: MouseEvent) => {
+    const handleGlobalMouseUp = () => {
       // Debounce mouse up events to improve performance
       clearTimeout(mouseUpTimer);
       mouseUpTimer = setTimeout(showContextMenuForSelection, 50);

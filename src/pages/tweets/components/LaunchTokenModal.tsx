@@ -24,13 +24,8 @@ const LaunchTokenModal: React.FC<LaunchTokenModalProps> = ({
   const [website, setWebsite] = useState("");
   const [twitterUrl, setTwitterUrl] = useState(initialTwitterUrl);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [autoDump, setAutoDump] = useState(false);
-  const [sliderValue, setSliderValue] = useState(3);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-
-  // Sample images for selection
-  const sampleImages = ["/cherryLogo.png", "/logoKOL.png"];
 
   // Token types
   const tokenTypes = [
@@ -99,26 +94,7 @@ const LaunchTokenModal: React.FC<LaunchTokenModalProps> = ({
     setSelectedTokenType(id);
   };
 
-  const handleSolOptionSelect = (option: number) => {
-    setSelectedSolOption(option);
-  };
 
-  const handleLaunchToken = () => {
-    // Implement token launch logic here
-    console.log({
-      tokenName,
-      tokenSymbol,
-      website,
-      twitterUrl,
-      selectedImage,
-      selectedTokenType,
-      splitRatio,
-      autoDump,
-      sliderValue,
-      selectedSolOption,
-    });
-    handleClose();
-  };
 
   // Handle click outside to close modal
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {

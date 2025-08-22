@@ -96,6 +96,7 @@ const AccountsPage: React.FC = () => {
   });
 
   const [tokenPnLRefreshing, setTokenPnLRefreshing] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   const tradesPerPage = 4;
   const tokensPerPage = 5;

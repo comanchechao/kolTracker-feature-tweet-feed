@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Navbar from "../../layouts/Navbar";
+
 import Footer from "../../layouts/Footer";
 import TokenCard, { Token } from "./components/TokenCard";
 import BackButton from "../../components/BackButton";

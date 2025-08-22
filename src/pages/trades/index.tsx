@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Icon } from "@iconify/react";
-import Navbar from "../../layouts/Navbar";
+
 import Footer from "../../layouts/Footer";
 import TradesCard, { TraderAccount } from "./components/TradesCard";
 import BackButton from "../../components/BackButton";

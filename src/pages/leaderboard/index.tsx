@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import LeaderboardHeader from "./components/LeaderboardHeader";
 import LeaderboardList from "./components/LeaderboardList";
-import Navbar from "../../layouts/Navbar";
+
 import Footer from "../../layouts/Footer";
 import BackButton from "../../components/BackButton";
 import { KOLService } from "../../api/kolService";

@@ -17,7 +17,7 @@ import "../../css/index.css";
 import Skeleton from "../../components/Skeleton";
 import HomepageSearch from "../../components/HomepageSearch";
 import BottomStatusMenu from "../../components/BottomStatusMenu";
-import Navbar from "../../layouts/Navbar";
+
 import TrendingRibbon from "../../components/TrendingRibbon";
 import Tweet from "../tweets/components/Tweet";
 import LaunchTokenModal from "../tweets/components/LaunchTokenModal";
